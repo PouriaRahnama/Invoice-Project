@@ -11,7 +11,6 @@ public class Invoice : BaseEntity
     }
     public Guid UserId { get; set; }  // کاربری که فاکتور را صادر کرده
     public Guid CustomerId { get; set; }
-    public decimal DiscountPercent { get; set; } = 0;
     public long TotalPrice { get; set; }
 
     #region Navigation
