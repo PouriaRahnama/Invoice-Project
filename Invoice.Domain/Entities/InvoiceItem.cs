@@ -1,6 +1,6 @@
 ﻿namespace Invoice.Domain.Entities;
 
-public class InvoiceItem : BaseEntity
+public class InvoiceItem : ICreatedEntity
 {
     public Guid InvoiceId { get; set; }
     public Guid ProductId { get; set; }

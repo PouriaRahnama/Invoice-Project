@@ -9,6 +9,7 @@ public class Customer : BaseEntity
     {
         Invoices = new List<Invoice>();
     }
+
     // کسی که این مشتری را ثبت کرده 
     public Guid UserId { get; set; }
     public required string FullName { get; set; }

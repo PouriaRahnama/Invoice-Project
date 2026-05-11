@@ -1,16 +1,16 @@
 namespace Invoice.Infrastructure.Repository.InterfacesRepository
 {
-    public interface IRepository<TEntity> where TEntity : class,IEntity<Guid>
+    public interface IRepository<TEntity> where TEntity : class
     {
         IQueryable<TEntity> Entities { get; }
         IQueryable<TEntity> EntitiesAsNoTracking { get; }
         Task<List<TEntity>> GetAllAsync();
-        Task<TEntity> GetByIdAsync(Guid Id);
+        Task<TEntity> GetByIdAsync(Guid id);
         Task CreateAsync(TEntity entity);
         Task CreateRangeAsync(List<TEntity> entity);
-        Task UpdateAsync(TEntity entity);
-        Task DeleteAsync(Guid Id);
-        Task DeleteAsync(TEntity entity);
-
+        void Update(TEntity entity);
+        Task DeleteAsync(Guid id);
+        void Delete(TEntity entity);
     }
+ 
 }

@@ -4,7 +4,7 @@
     {
         public void Configure(EntityTypeBuilder<InvoiceItem> builder)
         {
-            builder.HasKey(x => x.Id);
+            builder.HasKey(x => new { x.InvoiceId, x.ProductId });
             builder.ToTable("InvoiceItems");
             //builder.HasQueryFilter(x => !EF.Property<bool>(x, "IsDeleted"));
             // Relations

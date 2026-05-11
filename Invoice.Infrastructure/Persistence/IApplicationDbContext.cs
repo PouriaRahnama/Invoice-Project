@@ -1,6 +1,6 @@
 ﻿namespace Invoice.Infrastructure.Persistence;
 
-public interface IApplicationDbContext
+public interface IApplicationDbContext: IDisposable
 {
     #region Structure
 

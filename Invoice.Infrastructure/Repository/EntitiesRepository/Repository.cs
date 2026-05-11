@@ -2,7 +2,7 @@ using Invoice.Infrastructure.Repository.InterfacesRepository;
 
 namespace Invoice.Infrastructure.Repository.EntitiesRepository
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity<Guid>
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private readonly IApplicationDbContext _dbContext;
         protected DbSet<TEntity> entities;
@@ -16,14 +16,26 @@ namespace Invoice.Infrastructure.Repository.EntitiesRepository
         public IQueryable<TEntity> Entities => entities.AsQueryable();
 
         public IQueryable<TEntity> EntitiesAsNoTracking => entities.AsNoTracking().AsQueryable();
+        public Task<List<TEntity>> GetAllAsync()
+        {
+            return entities.ToListAsync();
+        }
+
+        public async Task<TEntity> GetByIdAsync(Guid id)
+        {
+            var entity = await entities.FindAsync(id);
+            if (entity == null)
+                throw new Exception("Id invalid, data not found");
+            return entity;
+        }
+
 
         public async Task CreateAsync(TEntity entity)
         {
             if (entity == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("data is null");
 
             await entities.AddAsync(entity);
-            await SaveChangesAsync();
         }
 
         public async Task CreateRangeAsync(List<TEntity> data)
@@ -32,46 +44,26 @@ namespace Invoice.Infrastructure.Repository.EntitiesRepository
                 throw new Exception("data invalid");
 
             await entities.AddRangeAsync(data);
-            await SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid Id)
+        public async Task DeleteAsync(Guid id)
         {
-            var entity = await GetByIdAsync(Id);
-            await DeleteAsync(entity);
+            var entity = await GetByIdAsync(id);
+            Delete(entity);
         }
 
-        public async Task DeleteAsync(TEntity entity)
+        public  void Delete(TEntity entity)
         {
             entities.Remove(entity);
-            await SaveChangesAsync();
         }
 
-        public Task<List<TEntity>> GetAllAsync()
-        {
-            return entities.ToListAsync();
-        }
-
-        public async Task<TEntity> GetByIdAsync(Guid Id)
-        {
-            var entity = await entities.Where(x => x.Id == Id).FirstOrDefaultAsync();
-            if (entity == null)
-                throw new Exception("Id invalid, data not found");
-            return entity;
-        }
-
-        public async Task UpdateAsync(TEntity entity)
+        public void Update(TEntity entity)
         {
             if (entity == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("data is null");
 
             entities.Update(entity);
-            await SaveChangesAsync();
         }
 
-        public async Task SaveChangesAsync()
-        {
-            await _dbContext.SaveChangesAsync();
-        }
     }
 }
