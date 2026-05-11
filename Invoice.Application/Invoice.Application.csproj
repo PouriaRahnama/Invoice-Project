@@ -5,5 +5,24 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="Gridify" Version="2.16.3" />
+		<PackageReference Include="Gridify.EntityFramework" Version="2.16.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.20" />
+		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="8.2.2" />
+	</ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mapping\" />
+    <Folder Include="Dtos\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Invoice.Domain\Invoice.Domain.csproj" />
+    <ProjectReference Include="..\Invoice.Framework\Invoice.Framework.csproj" />
+    <ProjectReference Include="..\Invoice.Infrastructure\Invoice.Infrastructure.csproj" />
+  </ItemGroup>
 
 </Project>
