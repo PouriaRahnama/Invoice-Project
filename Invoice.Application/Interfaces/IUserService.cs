@@ -1,10 +1,10 @@
-﻿using Invoice.Application.Dtos.UserDtos;
+﻿using Invoice.Application.Dtos;
 
 namespace Invoice.Application.Interfaces
 {
     public interface IUserService
     {
         Task<bool> RegisterUserAsync(RegisterUserAccountDto registerUserAccountDto);
-        Task<string> LoginUserAsync(LoginUserAccountDto loginUserAccountDto); 
+        Task<TokenInfoDto> LoginUserAsync(LoginUserAccountDto loginUserAccountDto); 
     }
 }

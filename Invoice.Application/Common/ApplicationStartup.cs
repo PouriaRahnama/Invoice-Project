@@ -13,6 +13,9 @@ namespace Invoice.Application.Common
 
             #region DI ( Registeration Services )
             services.AddHttpContextAccessor();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            //deff
+
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -25,59 +28,61 @@ namespace Invoice.Application.Common
 
             #region Idp Registration
 
-            //services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
-            //services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            //var jwtSettings = configuration.GetSection("JwtSettings");
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));      
+            var jwtSettings = configuration.GetSection("JwtSettings");
 
             //// Add JWT Authentication
-            //services.AddAuthentication(options =>
-            //{
-            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //}).AddJwtBearer(options =>
-            // {
-            //     options.TokenValidationParameters = new TokenValidationParameters
-            //     {
-            //         ValidateIssuer = true,
-            //         ValidateAudience = true,
-            //         ValidateLifetime = true,
-            //         ValidateIssuerSigningKey = true,
-            //         ValidIssuer = jwtSettings["Issuer"],
-            //         ValidAudience = jwtSettings["Audience"],
-            //         IssuerSigningKey = new SymmetricSecurityKey(
-            //             Encoding.UTF8.GetBytes(jwtSettings["Key"]))
-            //     };
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    // ClockSkew = TimeSpan.FromMinutes(configs.TokenTimeout),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidAudience = jwtSettings["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                         Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+                };
 
-            //     options.Events = new JwtBearerEvents
-            //     {
-            //         OnChallenge = async context =>
-            //         {
-            //             context.HandleResponse();
+                options.Events = new JwtBearerEvents
+                {
+                    OnChallenge = async context =>
+                    {
+                        context.HandleResponse();
 
-            //             context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            //             context.Response.ContentType = "application/json";
-            //             var result = OkApiResult<string>.Fail("the Token is not valid.", 403);
-            //             await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(result));
-            //         },
-            //         OnForbidden = async context =>
-            //         {
-            //             context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            //             context.Response.ContentType = "application/json";
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        context.Response.ContentType = "application/json";
+                        var result = OkApiResult<string>.Fail("the Token is not valid.", 403);
+                        await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(result));
+                    },
+                    OnForbidden = async context =>
+                    {
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        context.Response.ContentType = "application/json";
 
-            //             var result = OkApiResult<string>.Fail("forbidden", 403);
-            //             await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(result));
-            //         }
-            //     };
-            // });
+                        var result = OkApiResult<string>.Fail("forbidden", 403);
+                        await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(result));
+                    }
+                };
+            });
 
 
 
-            //services.AddAuthorization(options =>
-            //{
-            //    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-            //    .RequireAuthenticatedUser()
-            //    .Build();
-            //});
+            services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+            });
 
             #endregion
 

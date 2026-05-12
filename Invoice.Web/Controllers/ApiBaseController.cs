@@ -18,6 +18,12 @@ public class ApiBaseController : ControllerBase
         ??= HttpContext.RequestServices.GetRequiredService<IProductService>();
 
 
+    private IUserService userService;
+    protected IUserService _userService => userService
+        ??= HttpContext.RequestServices.GetRequiredService<IUserService>();
+
+
+
 
 }
 
