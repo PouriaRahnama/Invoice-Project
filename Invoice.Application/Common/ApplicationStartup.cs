@@ -13,9 +13,6 @@ namespace Invoice.Application.Common
 
             #region DI ( Registeration Services )
             services.AddHttpContextAccessor();
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            //deff
-
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -28,7 +25,7 @@ namespace Invoice.Application.Common
 
             #region Idp Registration
 
-            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));      
+ 
             var jwtSettings = configuration.GetSection("JwtSettings");
 
             //// Add JWT Authentication
@@ -42,7 +39,7 @@ namespace Invoice.Application.Common
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    // ClockSkew = TimeSpan.FromMinutes(configs.TokenTimeout),
+                    ClockSkew = TimeSpan.FromMinutes(5),
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
@@ -61,7 +58,7 @@ namespace Invoice.Application.Common
 
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
                         context.Response.ContentType = "application/json";
-                        var result = OkApiResult<string>.Fail("the Token is not valid.", 403);
+                        var result = OkApiResult<string>.Fail("the Token is not valid.", 401);
                         await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(result));
                     },
                     OnForbidden = async context =>

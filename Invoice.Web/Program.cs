@@ -50,10 +50,6 @@ builder.Services.AddSwaggerGen(c =>
                     new string[] { }
                 }
                 });
-
-    //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    //c.IncludeXmlComments(xmlPath);
 });
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
@@ -61,8 +57,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseHttpsRedirection(); 
 app.UseAuthentication();
-app.UseAuthorization();
-app.UseHttpsRedirection();
-app.MapControllers();
+app.UseAuthorization();    
+app.MapControllers();      
 app.Run();
