@@ -1,4 +1,8 @@
-﻿namespace Invoice.Web.Controllers;
+﻿using Invoice.Domain.Common;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+
+namespace Invoice.Web.Controllers;
 
 public class AuthController : ApiBaseController
 {
