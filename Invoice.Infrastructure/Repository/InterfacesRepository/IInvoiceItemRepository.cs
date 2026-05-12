@@ -1,4 +1,6 @@
-﻿namespace Invoice.Infrastructure.Repository.InterfacesRepository
+﻿using Invoice.Domain.Common;
+
+namespace Invoice.Infrastructure.Repository.InterfacesRepository
 {
     public interface IInvoiceItemRepository : IRepository<Invoice.Domain.Entities.InvoiceItem>
     {

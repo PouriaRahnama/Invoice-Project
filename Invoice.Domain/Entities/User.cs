@@ -11,6 +11,7 @@ public class User : BaseEntity
         Invoices = new List<Invoice>();
     }
     public required string Username { get; set; }
+    public required string Phone { get; set; }
     public required string PasswordHash { get; set; }
     public required string PasswordSalt { get; set; }
 

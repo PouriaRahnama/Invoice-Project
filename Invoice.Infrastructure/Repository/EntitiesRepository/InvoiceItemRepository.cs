@@ -8,5 +8,9 @@ namespace Invoice.Infrastructure.Repository.EntitiesRepository
         public InvoiceItemRepository(IApplicationDbContext dbContext) : base(dbContext)
         {
         }
+
+
+
+
     }
 }

@@ -5,7 +5,7 @@ namespace Invoice.Infrastructure.Common
 {
     public static class InfrastructureConfigure
     {
-        public static void ApplicationConfigureServices(this IServiceCollection services, IConfiguration configuration)
+        public static void InfrastructureConfigureServices(this IServiceCollection services, IConfiguration configuration)
         {
 
             #region DI ( Registeration Services )

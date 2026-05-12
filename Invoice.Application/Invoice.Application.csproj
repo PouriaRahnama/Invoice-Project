@@ -14,12 +14,6 @@
 		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="8.2.2" />
 	</ItemGroup>
   <ItemGroup>
-    <Folder Include="Mapping\" />
-    <Folder Include="Dtos\" />
-    <Folder Include="Interfaces\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Invoice.Domain\Invoice.Domain.csproj" />
     <ProjectReference Include="..\Invoice.Framework\Invoice.Framework.csproj" />
     <ProjectReference Include="..\Invoice.Infrastructure\Invoice.Infrastructure.csproj" />

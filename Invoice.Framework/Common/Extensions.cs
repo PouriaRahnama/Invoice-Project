@@ -22,13 +22,13 @@ public static class Extensions
         return convertDate;
     }
     //Get User Id
-    public static long GetUserId(this HttpContext? httpContext)
+    public static Guid GetUserId(this HttpContext? httpContext)
     {
         var claimsIdentity = httpContext?.User.Identity as ClaimsIdentity;
         var userIdValue = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-        if (long.TryParse(userIdValue, out long userId))
+        if (Guid.TryParse(userIdValue, out Guid userId))
         {
-            return userId == 0 ? throw new UnauthorizedAccessException() : userId;
+            return userId == Guid.Empty ? throw new UnauthorizedAccessException() : userId;
         }
 
         throw new UnauthorizedAccessException();

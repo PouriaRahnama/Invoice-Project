@@ -9,7 +9,8 @@ public static class SeedData
               {
                   Username="",
                   PasswordHash="",
-                  PasswordSalt=""
+                  PasswordSalt="",
+                  Phone=""
               }
       };
 }

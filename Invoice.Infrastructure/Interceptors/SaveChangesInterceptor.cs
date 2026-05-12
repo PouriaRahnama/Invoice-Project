@@ -50,7 +50,7 @@ public class SaveChangesInterceptor : Microsoft.EntityFrameworkCore.Diagnostics.
         if (eventData.Context is null)
             return base.SavingChangesAsync(eventData, result, cancellationToken);
 
-        long? currentUserId = null;
+        Guid? currentUserId = null;
         if (_contextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true)
         {
             currentUserId = _contextAccessor.HttpContext.GetUserId();
