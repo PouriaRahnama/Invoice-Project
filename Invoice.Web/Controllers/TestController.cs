@@ -1,9 +1,7 @@
-﻿using Invoice.Domain.Common;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.AspNetCore.Authorization;
 
 namespace Invoice.Web.Controllers;
+
 
 public class TestController : ApiBaseController
 {
