@@ -1,4 +1,6 @@
-﻿using Invoice.Application.Dtos.InvoiceDtos;
+﻿using AutoMapper.QueryableExtensions;
+using Invoice.Application.Dtos.InvoiceDtos;
+using System.Numerics;
 
 namespace Invoice.Application.Services
 {
@@ -28,20 +30,18 @@ namespace Invoice.Application.Services
         public async Task<bool> ChangeStatusAsync(Guid invoiceId, Status status)
         {
             var userId = _httpContextAccessor.HttpContext.GetUserId();
-
             var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
 
             if (invoice == null || invoice.UserId != userId)
                 throw new Exception("");
-
             invoice.Status = status;
 
             _invoiceRepository.Update(invoice);
             await _unitOfWork.SaveChangesAsync();
-
             return true;
         }
 
+        //done
         public async Task<Guid> CreateAsync(CreateInvoiceDto createInvoiceDto)
         {
             var userId = _httpContextAccessor.HttpContext.GetUserId();
@@ -59,9 +59,12 @@ namespace Invoice.Application.Services
             if (products.Count != productIds.Count)
                 throw new InvalidOperationException("One or more products not found.");
 
-            var invoice = _mapper.Map<Invoice.Domain.Entities.Invoice>(createInvoiceDto);
+            var invoiceNumber = await GenerateInvoiceNumberAsync();
 
-            await _invoiceRepository.CreateAsync(invoice);
+
+            var invoice = _mapper.Map<Invoice.Domain.Entities.Invoice>(createInvoiceDto);
+            invoice.UserId = userId;
+            invoice.InvoiceNumber = invoiceNumber;
 
             long invoiceTotal = 0;
 
@@ -75,11 +78,9 @@ namespace Invoice.Application.Services
                 if (product.Quantity < itemDto.Quantity)
                     throw new Exception($"Not enough stock for product {product.Name}");
 
-                long unitPrice = product.Price; // قیمت لحظه صدور
+                long unitPrice = product.Price; 
                 long totalBeforeDiscount = unitPrice * itemDto.Quantity;
-
                 long discountAmount = (long)(totalBeforeDiscount * (itemDto.DiscountPercent / 100m));
-
                 long finalItemTotal = totalBeforeDiscount - discountAmount;
 
                 var invoiceItem = new InvoiceItem
@@ -93,60 +94,54 @@ namespace Invoice.Application.Services
                 };
 
                 items.Add(invoiceItem);
-
                 invoiceTotal += finalItemTotal;
-
-                // کم کردن از موجودی
                 product.Quantity -= itemDto.Quantity;
             }
 
             invoice.TotalPrice = invoiceTotal;
 
+            await _invoiceRepository.CreateAsync(invoice);
             await _invoiceItemRepository.CreateRangeAsync(items);
 
             await _unitOfWork.SaveChangesAsync();
             return invoice.Id;
-            //var invoice = new Invoice
-            //{
-            //    CustomerId = dto.CustomerId,
-            //    UserId = userId,
-            //    InvoiceNumber = await GenerateInvoiceNumberAsync(),
-            //    Status = Status.Pending,
-            //    TotalPrice = 0
-            //};
         }
 
-        public async Task<InvoiceDetailDto> GetByIdAsync(Guid invoiceId)
+        //done
+        public async Task<GetInvoiceDetailsDto> GetByIdAsync(Guid invoiceId)
         {
             var userId = _httpContextAccessor.HttpContext.GetUserId();
 
-            var invoice = await _invoiceRepository.EntitiesAsNoTracking
-                .Include(i => i.Customer)
-                .Include(i => i.Items)
-                    .ThenInclude(ii => ii.Product)
-                .FirstOrDefaultAsync(i => i.Id == invoiceId && i.UserId == userId);
+            var invoiceDetails = await _invoiceRepository.EntitiesAsNoTracking
+                .Where(i => i.Id == invoiceId && i.UserId == userId)
+                .ProjectTo<GetInvoiceDetailsDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
 
-            if (invoice == null) throw new Exception("");
-
-            return new InvoiceDetailDto
-            {
-                InvoiceId = invoice.Id,
-                InvoiceNumber = invoice.InvoiceNumber,
-                Status = invoice.Status,
-                TotalPrice = invoice.TotalPrice,
-                CustomerName = invoice.Customer.FullName,
-                Items = invoice.Items.Select(i => new InvoiceItemDto
-                {
-                    ProductId = i.ProductId,
-                    ProductName = i.Product.Name,
-                    Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice,
-                    DiscountPercent = i.DiscountPercent,
-                    TotalPrice = i.TotalPrice
-                }).ToList()
-            };
-
-
+            return invoiceDetails ?? new GetInvoiceDetailsDto();
         }
+
+        //done
+        private async Task<string> GenerateInvoiceNumberAsync()
+        {
+            var currentYear = DateTime.UtcNow.Year; 
+            var latestInvoice = await _invoiceRepository.EntitiesAsNoTracking
+                .Where(inv => inv.InvoiceNumber.Contains(currentYear.ToString())) 
+                .OrderByDescending(inv => inv.InvoiceNumber) 
+                .FirstOrDefaultAsync();
+
+            string newNumber;
+            if (latestInvoice == null)
+                newNumber = $"INV-{currentYear}-00001";         
+            else
+            {
+                var parts = latestInvoice.InvoiceNumber.Split('-'); 
+                var lastPart = parts.Last();
+                int.TryParse(lastPart, out int currentSeq); 
+                currentSeq++; 
+                newNumber = $"INV-{currentYear}-{currentSeq:D5}"; 
+            }
+            return newNumber;
+        }
+
     }
 }

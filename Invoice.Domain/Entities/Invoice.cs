@@ -12,7 +12,7 @@ public class Invoice : BaseEntity
     public Guid UserId { get; set; }  // کاربری که فاکتور را صادر کرده
     public Guid CustomerId { get; set; }
     public long TotalPrice { get; set; }
-    public int InvoiceNumber { get; set; }
+    public string InvoiceNumber { get; set; }
     public Status Status { get; set; }
 
     #region Navigation
@@ -23,6 +23,6 @@ public class Invoice : BaseEntity
 }
 public enum Status
 {
-    Completed = 10,
+    Paid = 10,
     Pending = 20
 }

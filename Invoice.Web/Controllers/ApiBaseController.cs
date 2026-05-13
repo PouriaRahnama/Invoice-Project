@@ -28,5 +28,9 @@ public class ApiBaseController : ControllerBase
         ??= HttpContext.RequestServices.GetRequiredService<ICustomerService>();
 
 
+    private IInvoiceService invoiceService;
+    protected IInvoiceService _invoiceService => invoiceService
+        ??= HttpContext.RequestServices.GetRequiredService<IInvoiceService>();
+
 }
 
