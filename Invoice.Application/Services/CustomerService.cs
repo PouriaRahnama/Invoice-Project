@@ -1,5 +1,4 @@
-﻿
-namespace Invoice.Application.Services
+﻿namespace Invoice.Application.Services
 {
     public class CustomerService : ICustomerService
     {
@@ -18,7 +17,7 @@ namespace Invoice.Application.Services
             this._httpContextAccessor = httpContextAccessor;
         }
 
-
+        //done
         public async Task<Guid> CreateAsync(CreateCustomerDto createCustomerDto)
         {
             var customer = _mapper.Map<Customer>(createCustomerDto);
@@ -30,6 +29,7 @@ namespace Invoice.Application.Services
             return customer.Id;
         }
 
+        //done
         public async Task<bool> UpdateAsync(UpdateCustomerDto updateCustomerDto)
         {
             var existingCustomer = await _customerRepository.GetByIdAsync(updateCustomerDto.CustomerId);
@@ -46,9 +46,10 @@ namespace Invoice.Application.Services
             return true;
         }
 
-        public async Task<bool> DeleteAsync(DeleteCustomerDto deleteCustomerDto)
+        //done
+        public async Task<bool> DeleteAsync(Guid customerId)
         {
-            var existingCustomer = await _customerRepository.GetByIdAsync(deleteCustomerDto.CustomerId);
+            var existingCustomer = await _customerRepository.GetByIdAsync(customerId);
 
             if (existingCustomer == null) throw new Exception("مشتری پیدا نشد");
             if (existingCustomer.UserId != _httpContextAccessor.HttpContext.GetUserId())
@@ -59,7 +60,7 @@ namespace Invoice.Application.Services
 
             return true;
         }
-
+        //done
         public async Task<IEnumerable<GetAllCustomersDto>> GetAllAsync(Guid? userId)
         {
             var customers = _customerRepository.EntitiesAsNoTracking;
@@ -76,7 +77,8 @@ namespace Invoice.Application.Services
 
         }
 
-        public async Task<GetCustomerDetailsDto?> GetByIdAsync(Guid customerId)
+        //done
+        public async Task<GetCustomerDetailsDto> GetByIdAsync(Guid customerId)
         {
             var customer = await _customerRepository.EntitiesAsNoTracking.FirstOrDefaultAsync(c => c.Id == customerId);
 

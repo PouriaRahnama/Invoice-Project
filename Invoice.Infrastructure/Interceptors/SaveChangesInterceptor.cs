@@ -1,4 +1,6 @@
-﻿namespace Invoice.Infrastructure.Interceptors;
+﻿using System.Threading;
+
+namespace Invoice.Infrastructure.Interceptors;
 
 public class SaveChangesInterceptor : Microsoft.EntityFrameworkCore.Diagnostics.SaveChangesInterceptor
 {
@@ -11,10 +13,17 @@ public class SaveChangesInterceptor : Microsoft.EntityFrameworkCore.Diagnostics.
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
+
         if (eventData.Context is null)
             return base.SavingChanges(eventData, result);
 
-        var currentUserId = _contextAccessor.HttpContext.GetUserId();
+        string? currentUserId = null;
+        if (_contextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true)
+        {
+            currentUserId = Convert.ToString(_contextAccessor.HttpContext.GetUserId());
+        }
+
+
         var currentUserIP = _contextAccessor.HttpContext.GetUserIP();
 
         foreach (var entry in eventData.Context.ChangeTracker.Entries().Where(x => x.State == EntityState.Added))
@@ -50,10 +59,10 @@ public class SaveChangesInterceptor : Microsoft.EntityFrameworkCore.Diagnostics.
         if (eventData.Context is null)
             return base.SavingChangesAsync(eventData, result, cancellationToken);
 
-        Guid? currentUserId = null;
+        string? currentUserId = null;
         if (_contextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true)
         {
-            currentUserId = _contextAccessor.HttpContext.GetUserId();
+            currentUserId = Convert.ToString(_contextAccessor.HttpContext.GetUserId());
         }
 
         var currentUserIP = _contextAccessor.HttpContext.GetUserIP();

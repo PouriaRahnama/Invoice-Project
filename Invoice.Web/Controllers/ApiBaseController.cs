@@ -23,6 +23,9 @@ public class ApiBaseController : ControllerBase
         ??= HttpContext.RequestServices.GetRequiredService<IUserService>();
 
 
+    private ICustomerService customerService;
+    protected ICustomerService _customerService => customerService
+        ??= HttpContext.RequestServices.GetRequiredService<ICustomerService>();
 
 
 }
