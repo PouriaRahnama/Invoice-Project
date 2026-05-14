@@ -196,5 +196,10 @@ public static class Extensions
         return _lista.SelectMany(x => x.GetTypes()).Where(x => type.IsAssignableFrom(x) & !x.IsInterface & !x.IsAbstract).ToList();
 
     }
+
+    public static string GenerateProductCode(this string prefix)
+    {
+        return $"{prefix}-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..6].ToUpper()}";
+    }
 }
 

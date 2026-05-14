@@ -16,6 +16,9 @@ public class SqlServerApplicationDbContext : DbContext, IApplicationDbContext
         modelBuilder.OnCreated();
         modelBuilder.OnModified();
         modelBuilder.OnDeleted();
+        modelBuilder.Entity<User>().HasData(SeedData.DefaultUsers);
+        modelBuilder.Entity<Customer>().HasData(SeedData.DefaultCustomers);
+        modelBuilder.Entity<Product>().HasData(SeedData.DefaultProducts);
     }
 
     // Implementation DbSet

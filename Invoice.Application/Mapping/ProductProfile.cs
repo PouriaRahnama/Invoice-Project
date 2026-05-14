@@ -25,15 +25,18 @@ namespace Invoice.Application.Mapping
 
 
             CreateMap<CreateProductDto, Product>()
-                .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Code))
+                .ForMember(dest => dest.Code, opt => opt.Ignore())
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
-
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .AfterMap((src, dest) =>
+                 {
+                     dest.Code = "PRD".GenerateProductCode();
+                 });
 
             CreateMap<UpdateProductDto, Product>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Code))
+                .ForMember(dest => dest.Code, opt => opt.Ignore())
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));

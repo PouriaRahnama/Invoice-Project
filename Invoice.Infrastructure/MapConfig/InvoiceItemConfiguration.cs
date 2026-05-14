@@ -6,7 +6,7 @@
         {
             builder.HasKey(x => new { x.InvoiceId, x.ProductId });
             builder.ToTable("InvoiceItems");
-            //builder.HasQueryFilter(x => !EF.Property<bool>(x, "IsDeleted"));
+            builder.HasQueryFilter(x => !EF.Property<bool>(x, "IsDeleted"));
             // Relations
             builder.HasOne(e => e.Invoice)
                    .WithMany(e => e.Items)
