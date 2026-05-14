@@ -1,6 +1,4 @@
-﻿
-using Invoice.Application.Dtos.UserDtos;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.CodeAnalysis;
 
 namespace Invoice.Application.Services
 {
@@ -74,12 +72,14 @@ namespace Invoice.Application.Services
             if (userId != Guid.Empty)
                 users = users.Where(c => c.Id == userId.Value);
 
-            var usersList = await users.ToListAsync();
+            var productsProjected = await users
+                .ProjectTo<GetAllUserAccountsDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
 
-            if (usersList == null || usersList.Count() == 0)
+            if (productsProjected == null || productsProjected.Count == 0)
                 return new List<GetAllUserAccountsDto>();
 
-            return _mapper.Map<IEnumerable<GetAllUserAccountsDto>>(usersList);
+            return productsProjected;
         }
 
         
@@ -90,11 +90,14 @@ namespace Invoice.Application.Services
             if (userId == null || userId == Guid.Empty)
                 throw new Exception("کاربر در سیستم وارد نشده است.");
 
-            var user = await _userRepository.GetByIdAsync(userId);
+            var user = await _userRepository
+                .EntitiesAsNoTracking.Where(p => p.Id == userId)
+                .ProjectTo<GetUserAccountDetailsDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
 
             if (user == null) throw new Exception("کاربر در سیستم وجود ندارد.");
 
-            return _mapper.Map<GetUserAccountDetailsDto>(user);
+            return user;
         }
 
         /// <summary>

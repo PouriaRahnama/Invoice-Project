@@ -1,8 +1,4 @@
-﻿using Invoice.Application.Dtos;
-using Invoice.Application.Dtos.UserDtos;
-using Microsoft.AspNetCore.Authorization;
-
-namespace Invoice.Web.Controllers
+﻿namespace Invoice.Web.Controllers
 {
     public class UserController : ApiBaseController
     {
@@ -11,10 +7,10 @@ namespace Invoice.Web.Controllers
         }
 
         /// <summary>
-        /// 
+        /// ثبت نام
         /// </summary>
         [HttpPost]
-        [DisplayName("")]
+        [DisplayName("ثبت نام")]
         [AllowAnonymous]
         public async Task<OkApiResult<bool>> Register([FromBody] RegisterUserAccountDto registerUserAccountDto)
         {
@@ -22,10 +18,10 @@ namespace Invoice.Web.Controllers
         }
 
         /// <summary>
-        /// 
+        /// ورود به سیستم
         /// </summary>
         [HttpPost]
-        [DisplayName("")]
+        [DisplayName("ورود به سیستم")]
         [AllowAnonymous]
         public async Task<OkApiResult<TokenInfoDto>> Login([FromBody] LoginUserAccountDto loginUserAccountDto)
         {
@@ -33,10 +29,10 @@ namespace Invoice.Web.Controllers
         }
 
         /// <summary>
-        /// 
+        /// واکشی کاربران سیستم - واکشی کاربر توسط شناسه
         /// </summary>
         [HttpGet]
-        [DisplayName("")]
+        [DisplayName("واکشی کاربران سیستم - واکشی کاربر توسط شناسه")]
         public async Task<OkApiResult<IEnumerable<GetAllUserAccountsDto>>> GetAll([FromQuery] Guid? userId)
         {
             var id = userId.HasValue ? userId.Value : Guid.Empty;
@@ -44,10 +40,10 @@ namespace Invoice.Web.Controllers
         }
 
         /// <summary>
-        /// 
+        /// واکشی کاربر حاضر در سیستم
         /// </summary>
         [HttpGet]
-        [DisplayName("")]
+        [DisplayName("واکشی کاربر حاضر در سیستم")]
         public async Task<OkApiResult<GetUserAccountDetailsDto>> GetCurrentUser()
         {
             return OkApiResult<GetUserAccountDetailsDto>.Ok(await _userService.GetCurrentUserInformation());

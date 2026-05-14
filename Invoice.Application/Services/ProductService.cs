@@ -1,4 +1,7 @@
-﻿namespace Invoice.Application.Services
+﻿using Invoice.Domain.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
+
+namespace Invoice.Application.Services
 {
     public class ProductService : IProductService
     {
@@ -39,23 +42,28 @@
        
         public async Task<IEnumerable<GetAllProductsDto>> GetAllAsync()
         {
-            IQueryable<Product> productQuery = _productRepository.EntitiesAsNoTracking;
+            IQueryable<Product> products = _productRepository.EntitiesAsNoTracking;
 
-            var productsList = await productQuery.ToListAsync();
+            var productsProjected = await products
+                    .ProjectTo<GetAllProductsDto>(_mapper.ConfigurationProvider)
+                    .ToListAsync();
 
-            if (productsList == null || productsList.Count() == 0)
+            if (productsProjected == null || productsProjected.Count == 0)
                 return new List<GetAllProductsDto>();
 
-            return _mapper.Map<IEnumerable<GetAllProductsDto>>(productsList);
+            return productsProjected;
         }
         
         public async Task<GetProductDetailsDto> GetByIdAsync(Guid productId)
         {
-            var product = await _productRepository.EntitiesAsNoTracking.FirstOrDefaultAsync(p => p.Id == productId);
+            var product = await _productRepository
+                .EntitiesAsNoTracking.Where(p => p.Id == productId)
+                .ProjectTo<GetProductDetailsDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
 
             if (product == null) return new GetProductDetailsDto();
 
-            return _mapper.Map<GetProductDetailsDto>(product);
+            return product;
         }
         
         public async Task<bool> UpdateAsync(UpdateProductDto updateProductDto)

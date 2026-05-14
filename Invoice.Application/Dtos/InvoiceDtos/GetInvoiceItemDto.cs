@@ -9,5 +9,6 @@ namespace Invoice.Application.Dtos.InvoiceDtos
         public string UnitPrice { get; set; }
         public string DiscountPercent { get; set; }
         public string TotalPrice { get; set; }
+        public DateTime? CreatedDateTime { get; set; }
     }
 }

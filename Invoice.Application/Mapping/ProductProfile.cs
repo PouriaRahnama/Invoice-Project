@@ -11,7 +11,9 @@ namespace Invoice.Application.Mapping
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.CreatedDateTime,
+                opt => opt.MapFrom(src => EF.Property<DateTime?>(src, "CreatedDateTime")));
 
 
 
@@ -20,7 +22,9 @@ namespace Invoice.Application.Mapping
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.CreatedDateTime,
+                opt => opt.MapFrom(src => EF.Property<DateTime?>(src, "CreatedDateTime")));
 
 
 

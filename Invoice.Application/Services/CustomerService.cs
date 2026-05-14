@@ -57,7 +57,7 @@
 
             return true;
         }
-        
+
         public async Task<IEnumerable<GetAllCustomersDto>> GetAllAsync(Guid? userId)
         {
             var customers = _customerRepository.EntitiesAsNoTracking;
@@ -65,21 +65,26 @@
             if (userId != Guid.Empty)
                 customers = customers.Where(c => c.UserId == userId.Value);
 
-            var customersList = await customers.ToListAsync();
+            var doctorsProjected = await customers
+                    .ProjectTo<GetAllCustomersDto>(_mapper.ConfigurationProvider)
+                    .ToListAsync();
 
-            if (customersList == null || customersList.Count() == 0)
+            if (doctorsProjected == null || doctorsProjected.Count == 0)
                 return new List<GetAllCustomersDto>();
 
-            return _mapper.Map<IEnumerable<GetAllCustomersDto>>(customersList);
+            return doctorsProjected;
         }
 
         public async Task<GetCustomerDetailsDto> GetByIdAsync(Guid customerId)
         {
-            var customer = await _customerRepository.EntitiesAsNoTracking.FirstOrDefaultAsync(c => c.Id == customerId);
+            var customer = await _customerRepository
+                .EntitiesAsNoTracking.Where(c => c.Id == customerId)
+                .ProjectTo<GetCustomerDetailsDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
 
             if (customer == null) return new GetCustomerDetailsDto();
 
-            return _mapper.Map<GetCustomerDetailsDto>(customer);
+            return customer;
         }
     }
 }

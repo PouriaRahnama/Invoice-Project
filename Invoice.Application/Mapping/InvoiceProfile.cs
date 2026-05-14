@@ -24,7 +24,9 @@ namespace Invoice.Application.Mapping
                 .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice.ToString("N0")))
                 .ForMember(dest => dest.InvoiceId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FullName))
-                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
+                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items))
+                .ForMember(dest => dest.CreatedDateTime,
+                    opt => opt.MapFrom(src => EF.Property<DateTime?>(src, "CreatedDateTime")));
 
             CreateMap<InvoiceItem, GetInvoiceItemDto>()
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
@@ -32,7 +34,9 @@ namespace Invoice.Application.Mapping
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
                 .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice.ToString("N0")))
-                .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice.ToString("N0")));
+                .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice.ToString("N0")))
+                .ForMember(dest => dest.CreatedDateTime,
+                    opt => opt.MapFrom(src => EF.Property<DateTime?>(src, "CreatedDateTime"))); 
         }
     }
 }

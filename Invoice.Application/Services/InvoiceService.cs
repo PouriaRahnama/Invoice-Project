@@ -46,16 +46,14 @@
 
             var productIds = createInvoiceDto.Items.Select(i => i.ProductId).ToList();
 
-            var products = await _productRepository
-                .EntitiesAsNoTracking
+            var products = await _productRepository.EntitiesAsNoTracking
                 .Where(p => productIds.Contains(p.Id))
                 .ToListAsync();
 
             if (products.Count != productIds.Count)
-                throw new InvalidOperationException("One or more products not found.");
+                throw new InvalidOperationException("تعدادی از محصولات وارد شده پیدا نشد.");
 
             var invoiceNumber = await GenerateInvoiceNumberAsync();
-
 
             var invoice = _mapper.Map<Invoice.Domain.Entities.Invoice>(createInvoiceDto);
             invoice.UserId = userId;
@@ -69,9 +67,8 @@
             {
                 var product = products.First(p => p.Id == itemDto.ProductId);
 
-                // بررسی موجودی
                 if (product.Quantity < itemDto.Quantity)
-                    throw new Exception($"Not enough stock for product {product.Name}");
+                    throw new Exception($"موجودی محصول کافی نمی باشد. {product.Name}");
 
                 long unitPrice = product.Price; 
                 long totalBeforeDiscount = unitPrice * itemDto.Quantity;
@@ -113,7 +110,23 @@
 
             return invoiceDetails ?? new GetInvoiceDetailsDto();
         }
-     
+
+        public async Task<List<GetInvoiceDetailsDto>> GetByCustomerIdAsync(Guid customerId)
+        {
+            var userId = _httpContextAccessor.HttpContext.GetUserId();
+
+            var invoiceDetails = await _invoiceRepository.EntitiesAsNoTracking
+                .Where(i => i.CustomerId == customerId && i.UserId == userId)
+                .ProjectTo<GetInvoiceDetailsDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+
+            if (invoiceDetails == null || invoiceDetails.Count == 0)
+                return new List<GetInvoiceDetailsDto>();
+
+            return invoiceDetails;
+        }
+
         private async Task<string> GenerateInvoiceNumberAsync()
         {
             var currentYear = DateTime.UtcNow.Year; 
@@ -135,6 +148,5 @@
             }
             return newNumber;
         }
-
     }
 }

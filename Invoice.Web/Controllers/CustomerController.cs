@@ -1,7 +1,4 @@
-﻿using Invoice.Application.Dtos.CustomerDtos;
-using Microsoft.AspNetCore.Authorization;
-
-namespace Invoice.Web.Controllers
+﻿namespace Invoice.Web.Controllers
 {
     public class CustomerController : ApiBaseController
     {
@@ -9,10 +6,10 @@ namespace Invoice.Web.Controllers
         {
         }
         /// <summary>
-        /// 
+        /// واکشی مشتریان - واکشی مشتریان ثبت شده توسط کاربر سیستم
         /// </summary>
         [HttpGet]
-        [DisplayName("")]
+        [DisplayName("واکشی مشتریان - واکشی مشتریان ثبت شده توسط کاربر سیستم")]
         public async Task<OkApiResult<IEnumerable<GetAllCustomersDto>>> GetAll([FromQuery] Guid? userId)
         {
             var id = userId.HasValue ? userId.Value : Guid.Empty;
@@ -20,46 +17,43 @@ namespace Invoice.Web.Controllers
         }
 
         /// <summary>
-        /// 
+        /// واکشی مشتری توسط شناسه
         /// </summary>
         [HttpGet]
-        [DisplayName("")]
+        [DisplayName("واکشی مشتری توسط شناسه")]
         public async Task<OkApiResult<GetCustomerDetailsDto>> GetById([FromQuery] Guid customerId)
         {
             return OkApiResult<GetCustomerDetailsDto>.Ok(await _customerService.GetByIdAsync(customerId));
         }
 
         /// <summary>
-        /// 
+        /// ایجاد مشتری
         /// </summary>
         [HttpPost]
-        [DisplayName("")]
+        [DisplayName("ایجاد مشتری")]
         public async Task<OkApiResult<Guid>> Create([FromBody] CreateCustomerDto createCustomerDto)
         {
             return OkApiResult<Guid>.Ok(await _customerService.CreateAsync(createCustomerDto));
         }
 
         /// <summary>
-        /// 
+        /// ویرایش مشتری
         /// </summary>
         [HttpPost]
-        [DisplayName("")]
+        [DisplayName("ویرایش مشتری")]
         public async Task<OkApiResult<bool>> Update([FromBody] UpdateCustomerDto updateCustomerDto)
         {
             return OkApiResult<bool>.Ok(await _customerService.UpdateAsync(updateCustomerDto));
         }
 
         /// <summary>
-        /// 
+        /// حذف مشتری
         /// </summary>
         [HttpPost]
-        [DisplayName("")]
+        [DisplayName("حذف مشتری")]
         public async Task<OkApiResult<bool>> Delete([FromQuery] Guid customerId)
         {
             return OkApiResult<bool>.Ok(await _customerService.DeleteAsync(customerId));
         }
-
-
-
     }
 }

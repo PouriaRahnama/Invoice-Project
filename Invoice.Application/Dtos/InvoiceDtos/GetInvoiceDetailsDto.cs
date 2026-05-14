@@ -10,5 +10,6 @@ namespace Invoice.Application.Dtos.InvoiceDtos
 
         public string CustomerName { get; set; }
         public List<GetInvoiceItemDto> Items { get; set; } = new();
+        public DateTime? CreatedDateTime { get; set; }
     }
 }

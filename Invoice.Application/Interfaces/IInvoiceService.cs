@@ -7,7 +7,6 @@ namespace Invoice.Application.Interfaces
         Task<Guid> CreateAsync(CreateInvoiceDto createInvoiceDto);
         Task<GetInvoiceDetailsDto> GetByIdAsync(Guid invoiceId);      
         Task<bool> ChangeStatusAsync(Guid invoiceId, Status status);
-
-        //Task<List<InvoiceSummaryDto>> GetMyInvoicesAsync();
+        Task<List<GetInvoiceDetailsDto>> GetByCustomerIdAsync(Guid customerId);
     }
 }

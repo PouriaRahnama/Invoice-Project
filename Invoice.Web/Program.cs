@@ -1,9 +1,4 @@
-using Invoice.Application.Common;
-using Invoice.Infrastructure.Common;
-using Invoice.Web.Middlewares;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
-
+﻿using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +10,7 @@ builder.Services.ConfigureService(builder.Configuration);
 builder.Services.InfrastructureConfigureServices(builder.Configuration);
 builder.Services.ApplicationConfigureServices(builder.Configuration);
 
+#region Swagger Config
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -51,7 +47,14 @@ builder.Services.AddSwaggerGen(c =>
                     new string[] { }
                 }
                 });
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
+    c.IncludeXmlComments(xmlPath);
 });
+#endregion
+
+
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
@@ -62,5 +65,14 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseHttpsRedirection(); 
 app.UseAuthentication();
 app.UseAuthorization();    
-app.MapControllers();      
+app.MapControllers();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<SqlServerApplicationDbContext>();
+    db.Database.Migrate();
+}
+
+
 app.Run();

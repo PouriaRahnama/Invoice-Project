@@ -12,5 +12,5 @@ namespace Invoice.Infrastructure.Repository.InterfacesRepository
         Task DeleteAsync(Guid id);
         void Delete(TEntity entity);
     }
- 
+
 }

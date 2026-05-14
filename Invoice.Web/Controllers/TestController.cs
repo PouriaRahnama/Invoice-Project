@@ -1,15 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-
-namespace Invoice.Web.Controllers;
-
-
+﻿namespace Invoice.Web.Controllers;
 public class TestController : ApiBaseController
 {
     public TestController(ILogger<ApiBaseController> logger) : base(logger)
     {
     }
 
-    [HttpGet(Name = "Auth")]
+    [HttpGet(Name = "Test")]
     [AllowAnonymous]
     public IActionResult Get()
     {

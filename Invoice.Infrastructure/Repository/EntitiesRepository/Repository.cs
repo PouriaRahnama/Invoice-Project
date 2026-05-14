@@ -1,4 +1,5 @@
 using Invoice.Infrastructure.Repository.InterfacesRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace Invoice.Infrastructure.Repository.EntitiesRepository
 {
@@ -64,6 +65,7 @@ namespace Invoice.Infrastructure.Repository.EntitiesRepository
 
             entities.Update(entity);
         }
+
 
     }
 }

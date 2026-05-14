@@ -1,5 +1,3 @@
-using Invoice.Application.Interfaces;
-
 namespace Invoice.Web.Controllers;
 
 [ApiController]
