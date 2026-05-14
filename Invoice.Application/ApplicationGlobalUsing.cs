@@ -20,7 +20,9 @@ global using Invoice.Application.Dtos.UserDtos;
 global using Microsoft.Extensions.Options;
 global using System.IdentityModel.Tokens.Jwt;
 global using System.Security.Claims;
-
-
+global using Invoice.Application.Dtos.ProductDtos;
+global using Invoice.Application.Dtos;
+global using AutoMapper.QueryableExtensions;
+global using Invoice.Application.Dtos.InvoiceDtos;
 
 

@@ -1,8 +1,4 @@
-﻿using AutoMapper.QueryableExtensions;
-using Invoice.Application.Dtos.InvoiceDtos;
-using System.Numerics;
-
-namespace Invoice.Application.Services
+﻿namespace Invoice.Application.Services
 {
     public class InvoiceService : IInvoiceService
     {
@@ -40,8 +36,7 @@ namespace Invoice.Application.Services
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
-
-        //done
+    
         public async Task<Guid> CreateAsync(CreateInvoiceDto createInvoiceDto)
         {
             var userId = _httpContextAccessor.HttpContext.GetUserId();
@@ -106,8 +101,7 @@ namespace Invoice.Application.Services
             await _unitOfWork.SaveChangesAsync();
             return invoice.Id;
         }
-
-        //done
+   
         public async Task<GetInvoiceDetailsDto> GetByIdAsync(Guid invoiceId)
         {
             var userId = _httpContextAccessor.HttpContext.GetUserId();
@@ -119,8 +113,7 @@ namespace Invoice.Application.Services
 
             return invoiceDetails ?? new GetInvoiceDetailsDto();
         }
-
-        //done
+     
         private async Task<string> GenerateInvoiceNumberAsync()
         {
             var currentYear = DateTime.UtcNow.Year; 

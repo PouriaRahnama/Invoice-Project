@@ -1,5 +1,6 @@
 using Invoice.Application.Common;
 using Invoice.Infrastructure.Common;
+using Invoice.Web.Middlewares;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
@@ -19,8 +20,8 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "My App API",
-        Description = "My App API - Version01"
+        Title = "Invoice API",
+        Description = "Invoice API - Version01"
     });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -57,7 +58,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseHttpsRedirection(); 
 app.UseAuthentication();
 app.UseAuthorization();    

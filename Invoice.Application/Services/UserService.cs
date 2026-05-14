@@ -1,5 +1,6 @@
-﻿using Azure.Core;
-using Invoice.Application.Dtos;
+﻿
+using Invoice.Application.Dtos.UserDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Invoice.Application.Services
 {
@@ -9,28 +10,31 @@ namespace Invoice.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         public UserService(IUserRepository userRepository,
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            IOptions<JwtSettings> jwtSettings)
+            IOptions<JwtSettings> jwtSettings,
+            IHttpContextAccessor httpContextAccessor)
         {
             this._userRepository = userRepository;
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
             this._jwtSettings = jwtSettings.Value;
+            this._httpContextAccessor = httpContextAccessor;
         }
-        //done
+        
         public async Task<TokenInfoDto> LoginUserAsync(LoginUserAccountDto loginUserAccountDto)
         {
             var user = await _userRepository.EntitiesAsNoTracking
                 .FirstOrDefaultAsync(u => u.Username == loginUserAccountDto.Username);
 
-            if (user == null) throw new Exception(".");
+            if (user == null) throw new Exception("نام کاربری یا رمز عبور اشتباه می باشد.");
 
             var hashPassowrd = EncryptionUtility.GetSHA256(loginUserAccountDto.Password, user.PasswordSalt);
-            if (user.PasswordHash != hashPassowrd) throw new Exception();
+            if (user.PasswordHash != hashPassowrd) throw new Exception("نام کاربری یا رمز عبور اشتباه می باشد.");
 
-            var accessToken = GetNewToken(user.Id);
+            var accessToken = GetNewToken(user);
             TokenInfoDto token = new()
             {
                 AccessToken = accessToken,
@@ -41,13 +45,13 @@ namespace Invoice.Application.Services
             return token;
         }
 
-        //done
+        
         public async Task<bool> RegisterUserAsync(RegisterUserAccountDto registerUserAccountDto)
         {
             var existingUser = await _userRepository.EntitiesAsNoTracking
                 .FirstOrDefaultAsync(u => u.Username == u.Username || u.Phone == u.Phone);
 
-            if (existingUser != null) throw new Exception("کاربر از قبل موجوداست");
+            if (existingUser != null) throw new Exception("کاربر از قبل وجود دارد");
 
             string passwordSalt = EncryptionUtility.GetNewSalt();
             string passwordHash = EncryptionUtility.GetSHA256(registerUserAccountDto.Password, passwordSalt);
@@ -62,15 +66,47 @@ namespace Invoice.Application.Services
             return true;
         }
 
-        //done
+        
+        public async Task<IEnumerable<GetAllUserAccountsDto>> GetAllAsync(Guid? userId)
+        {
+            var users = _userRepository.EntitiesAsNoTracking;
+
+            if (userId != Guid.Empty)
+                users = users.Where(c => c.Id == userId.Value);
+
+            var usersList = await users.ToListAsync();
+
+            if (usersList == null || usersList.Count() == 0)
+                return new List<GetAllUserAccountsDto>();
+
+            return _mapper.Map<IEnumerable<GetAllUserAccountsDto>>(usersList);
+        }
+
+        
+        public async Task<GetUserAccountDetailsDto> GetCurrentUserInformation()
+        {
+            var userId = _httpContextAccessor.HttpContext.GetUserId();
+
+            if (userId == null || userId == Guid.Empty)
+                throw new Exception("کاربر در سیستم وارد نشده است.");
+
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            if (user == null) throw new Exception("کاربر در سیستم وجود ندارد.");
+
+            return _mapper.Map<GetUserAccountDetailsDto>(user);
+        }
+
         /// <summary>
         /// jwt تولید توکن 
         /// </summary>
-        private string GetNewToken(Guid userId)
+        private string GetNewToken(User user)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Username.ToString() ?? ""),
+                new Claim(ClaimTypes.MobilePhone,user.Phone.ToString() ?? ""),
             };
 
             int expireTime = _jwtSettings.DurationInMinutes;
@@ -87,6 +123,7 @@ namespace Invoice.Application.Services
             string accessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
             return accessToken;
         }
+
 
     }
 }

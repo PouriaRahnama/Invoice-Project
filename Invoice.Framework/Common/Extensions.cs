@@ -1,4 +1,6 @@
-﻿namespace Invoice.Framework.Common;
+﻿using System.Text.RegularExpressions;
+
+namespace Invoice.Framework.Common;
 
 public static class Extensions
 {
@@ -33,7 +35,6 @@ public static class Extensions
 
         throw new UnauthorizedAccessException();
     }
-
     public static Tuple<long?, string?> GetUserInformation(this HttpContext? httpContext)
     {
         long? userId = null;
@@ -46,7 +47,6 @@ public static class Extensions
 
         return new(userId, userIP);
     }
-
     //Get User Browser
     public static string GetUserBrowser(this HttpContext context) => context.Request.Headers["User-Agent"].ToString();
     //Get User IP
@@ -145,7 +145,6 @@ public static class Extensions
 
         return imgDataURL;
     }
-
     public static byte[] ConvertIFormFileToByteforImage(IFormFile formFile)
     {
         using MemoryStream memoryStream = new MemoryStream();
@@ -171,7 +170,6 @@ public static class Extensions
 
         return displayAttribute?.Name ?? enumValue.ToString();
     }
-
     public static List<string> GetAllClassName(this Type type)
     {
         var _lista = new List<Assembly>();
@@ -183,7 +181,6 @@ public static class Extensions
 
         return _lista.SelectMany(x => x.GetTypes()).Where(x => type.IsAssignableFrom(x) & !x.IsInterface & !x.IsAbstract).Select(x => x.FullName).ToList();
     }
-
     public static List<Type> GetAllClassTypes(this Type type)
     {
         var _lista = new List<Assembly>();
@@ -196,10 +193,17 @@ public static class Extensions
         return _lista.SelectMany(x => x.GetTypes()).Where(x => type.IsAssignableFrom(x) & !x.IsInterface & !x.IsAbstract).ToList();
 
     }
-
     public static string GenerateProductCode(this string prefix)
     {
         return $"{prefix}-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..6].ToUpper()}";
+    }
+    public static bool IsPersian(this string input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+            return false;
+
+        // چک کردن وجود حداقل یک کاراکتر فارسی
+        return Regex.IsMatch(input, @"[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]");
     }
 }
 

@@ -32,6 +32,26 @@ namespace Invoice.Web.Controllers
             return OkApiResult<TokenInfoDto>.Ok(await _userService.LoginUserAsync(loginUserAccountDto));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [HttpGet]
+        [DisplayName("")]
+        public async Task<OkApiResult<IEnumerable<GetAllUserAccountsDto>>> GetAll([FromQuery] Guid? userId)
+        {
+            var id = userId.HasValue ? userId.Value : Guid.Empty;
+            return OkApiResult<IEnumerable<GetAllUserAccountsDto>>.Ok(await _userService.GetAllAsync(id));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [HttpGet]
+        [DisplayName("")]
+        public async Task<OkApiResult<GetUserAccountDetailsDto>> GetCurrentUser()
+        {
+            return OkApiResult<GetUserAccountDetailsDto>.Ok(await _userService.GetCurrentUserInformation());
+        }
 
     }
 }

@@ -13,7 +13,10 @@ public class TestController : ApiBaseController
     [AllowAnonymous]
     public IActionResult Get()
     {
-        var x = User;
+        var q = User;
+        //var a = 1;
+        //var b = 0;
+        //var x = a/b;
         return Ok("done !!!");
     }
 }

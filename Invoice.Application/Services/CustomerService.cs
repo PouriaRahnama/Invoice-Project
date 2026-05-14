@@ -17,7 +17,6 @@
             this._httpContextAccessor = httpContextAccessor;
         }
 
-        //done
         public async Task<Guid> CreateAsync(CreateCustomerDto createCustomerDto)
         {
             var customer = _mapper.Map<Customer>(createCustomerDto);
@@ -29,14 +28,13 @@
             return customer.Id;
         }
 
-        //done
         public async Task<bool> UpdateAsync(UpdateCustomerDto updateCustomerDto)
         {
             var existingCustomer = await _customerRepository.GetByIdAsync(updateCustomerDto.CustomerId);
 
             if (existingCustomer == null) throw new Exception("مشتری پیدا نشد");
             if (existingCustomer.UserId != _httpContextAccessor.HttpContext.GetUserId())
-                throw new Exception("");
+                throw new Exception("مشتری مربوط به شما نمی باشد.");
 
             _mapper.Map(updateCustomerDto, existingCustomer);
 
@@ -46,21 +44,20 @@
             return true;
         }
 
-        //done
         public async Task<bool> DeleteAsync(Guid customerId)
         {
             var existingCustomer = await _customerRepository.GetByIdAsync(customerId);
 
             if (existingCustomer == null) throw new Exception("مشتری پیدا نشد");
             if (existingCustomer.UserId != _httpContextAccessor.HttpContext.GetUserId())
-                throw new Exception("");
+                throw new Exception("مشتری مربوط به شما نمی باشد.");
 
             await _customerRepository.DeleteAsync(existingCustomer.Id);
             await _unitOfWork.SaveChangesAsync();
 
             return true;
         }
-        //done
+        
         public async Task<IEnumerable<GetAllCustomersDto>> GetAllAsync(Guid? userId)
         {
             var customers = _customerRepository.EntitiesAsNoTracking;
@@ -74,10 +71,8 @@
                 return new List<GetAllCustomersDto>();
 
             return _mapper.Map<IEnumerable<GetAllCustomersDto>>(customersList);
-
         }
 
-        //done
         public async Task<GetCustomerDetailsDto> GetByIdAsync(Guid customerId)
         {
             var customer = await _customerRepository.EntitiesAsNoTracking.FirstOrDefaultAsync(c => c.Id == customerId);
@@ -86,7 +81,5 @@
 
             return _mapper.Map<GetCustomerDetailsDto>(customer);
         }
-
-
     }
 }
