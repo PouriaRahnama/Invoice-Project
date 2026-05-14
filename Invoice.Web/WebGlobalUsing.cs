@@ -19,6 +19,8 @@ global using Serilog;
 global using Serilog.Events;
 global using Serilog.Formatting.Json;
 global using Serilog.Core;
+global using Invoice.Web.Configuration;
+global using System.Reflection;
 
 
 

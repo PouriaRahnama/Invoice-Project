@@ -1,6 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
-
-namespace Invoice.Application.Services
+﻿namespace Invoice.Application.Services
 {
     public class UserService : IUserService
     {

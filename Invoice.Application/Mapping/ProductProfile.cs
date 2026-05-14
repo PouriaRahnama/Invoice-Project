@@ -1,6 +1,4 @@
-﻿using Invoice.Application.Dtos.ProductDtos;
-
-namespace Invoice.Application.Mapping
+﻿namespace Invoice.Application.Mapping
 {
     public class ProductProfile : Profile
     {

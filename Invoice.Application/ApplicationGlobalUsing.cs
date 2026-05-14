@@ -24,5 +24,6 @@ global using Invoice.Application.Dtos.ProductDtos;
 global using Invoice.Application.Dtos;
 global using AutoMapper.QueryableExtensions;
 global using Invoice.Application.Dtos.InvoiceDtos;
-
-
+global using Microsoft.CodeAnalysis;
+global using Invoice.Application.Services;
+global using System.Security.Cryptography;

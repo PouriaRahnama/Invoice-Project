@@ -1,7 +1,4 @@
-﻿using Invoice.Domain.Entities;
-using Microsoft.AspNetCore.Http.HttpResults;
-
-namespace Invoice.Application.Services
+﻿namespace Invoice.Application.Services
 {
     public class ProductService : IProductService
     {

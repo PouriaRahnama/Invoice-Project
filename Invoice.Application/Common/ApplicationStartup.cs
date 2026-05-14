@@ -1,7 +1,4 @@
-﻿using Invoice.Application.Interfaces;
-using Invoice.Application.Services;
-
-namespace Invoice.Application.Common
+﻿namespace Invoice.Application.Common
 {
     public static class ApplicationStartup
     {

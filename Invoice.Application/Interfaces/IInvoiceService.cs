@@ -1,6 +1,4 @@
-﻿using Invoice.Application.Dtos.InvoiceDtos;
-
-namespace Invoice.Application.Interfaces
+﻿namespace Invoice.Application.Interfaces
 {
     public interface IInvoiceService
     {

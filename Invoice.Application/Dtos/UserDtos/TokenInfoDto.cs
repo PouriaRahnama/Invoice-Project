@@ -1,5 +1,4 @@
-﻿
-namespace Invoice.Application.Dtos
+﻿namespace Invoice.Application.Dtos.UserDtos
 {
     public class TokenInfoDto
     {

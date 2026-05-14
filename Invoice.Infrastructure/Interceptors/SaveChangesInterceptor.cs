@@ -1,6 +1,4 @@
-﻿using System.Threading;
-
-namespace Invoice.Infrastructure.Interceptors;
+﻿namespace Invoice.Infrastructure.Interceptors;
 
 public class SaveChangesInterceptor : Microsoft.EntityFrameworkCore.Diagnostics.SaveChangesInterceptor
 {

@@ -1,7 +1,4 @@
-﻿using Invoice.Web.Configuration;
-using Serilog;
-using System.Reflection;
-
+﻿
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
