@@ -15,6 +15,10 @@ global using Invoice.Web.Middlewares;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.OpenApi.Models;
 global using Invoice.Application.Interfaces;
+global using Serilog;
+global using Serilog.Events;
+global using Serilog.Formatting.Json;
+global using Serilog.Core;
 
 
 

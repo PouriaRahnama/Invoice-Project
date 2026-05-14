@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using Invoice.Web.Configuration;
+using Serilog;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +56,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 #endregion
 
+var appName = builder.Environment.ApplicationName;
+SerilogConfig.ConfigureLogging(builder.Host, appName);
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
@@ -74,5 +78,5 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-
+app.UseSerilogRequestLogging();
 app.Run();
