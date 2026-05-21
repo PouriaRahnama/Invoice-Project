@@ -45,7 +45,7 @@
         public async Task<bool> RegisterUserAsync(RegisterUserAccountDto registerUserAccountDto)
         {
             var existingUser = await _userRepository.EntitiesAsNoTracking
-                .FirstOrDefaultAsync(u => u.Username == u.Username || u.Phone == u.Phone);
+                .FirstOrDefaultAsync(u => u.Username == registerUserAccountDto.Username || u.Phone == registerUserAccountDto.Phone);
 
             if (existingUser != null) throw new Exception("کاربر از قبل وجود دارد");
 
