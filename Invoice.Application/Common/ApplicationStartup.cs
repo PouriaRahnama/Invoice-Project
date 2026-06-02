@@ -1,4 +1,6 @@
-﻿namespace Invoice.Application.Common
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace Invoice.Application.Common
 {
     public static class ApplicationStartup
     {
@@ -11,7 +13,9 @@
             #region DI ( Registeration Services )
             services.AddHttpContextAccessor();
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(cfg => { },
+                  Assembly.GetExecutingAssembly()
+              );
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProductService, ProductService>();
