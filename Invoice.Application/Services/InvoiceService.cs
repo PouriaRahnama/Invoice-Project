@@ -26,10 +26,15 @@
         public async Task<bool> ChangeStatusAsync(Guid invoiceId, Status status)
         {
             var userId = _httpContextAccessor.HttpContext.GetUserId();
+
+            if (userId == null || userId == Guid.Empty)
+                throw new UnauthorizedException("کاربر شناسایی نشد");
+
             var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
 
-            if (invoice == null || invoice.UserId != userId)
-                throw new Exception("");
+            if (invoice == null)
+                throw new NotFoundException("فاکتور مورد نظر یافت نشد.");
+
             invoice.Status = status;
 
             _invoiceRepository.Update(invoice);
@@ -41,17 +46,20 @@
         {
             var userId = _httpContextAccessor.HttpContext.GetUserId();
 
+            if (userId == null || userId == Guid.Empty)
+                throw new UnauthorizedException("کاربر شناسایی نشد");
+
             if (createInvoiceDto.Items == null || !createInvoiceDto.Items.Any())
-                throw new Exception("");
+                throw new BusinessException("فاکتور باید حداقل یک محصول داشته باشد."); 
 
             var productIds = createInvoiceDto.Items.Select(i => i.ProductId).ToList();
 
-            var products = await _productRepository.EntitiesAsNoTracking
+            var products = await _productRepository.Entities
                 .Where(p => productIds.Contains(p.Id))
                 .ToListAsync();
 
             if (products.Count != productIds.Count)
-                throw new InvalidOperationException("تعدادی از محصولات وارد شده پیدا نشد.");
+                throw new BusinessException("تعدادی از محصولات وارد شده پیدا نشد.");
 
             var invoiceNumber = await GenerateInvoiceNumberAsync();
 
@@ -88,10 +96,12 @@
                 items.Add(invoiceItem);
                 invoiceTotal += finalItemTotal;
                 product.Quantity -= itemDto.Quantity;
+
+                // _productRepository.Update(product); tracking => Savechange
             }
 
             invoice.TotalPrice = invoiceTotal;
-
+ 
             await _invoiceRepository.CreateAsync(invoice);
             await _invoiceItemRepository.CreateRangeAsync(items);
 
@@ -103,17 +113,26 @@
         {
             var userId = _httpContextAccessor.HttpContext.GetUserId();
 
+            if (userId == null || userId == Guid.Empty)
+                throw new UnauthorizedException("کاربر شناسایی نشد");
+
             var invoiceDetails = await _invoiceRepository.EntitiesAsNoTracking
                 .Where(i => i.Id == invoiceId && i.UserId == userId)
                 .ProjectTo<GetInvoiceDetailsDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();
 
-            return invoiceDetails ?? new GetInvoiceDetailsDto();
+            if (invoiceDetails.Items == null || !invoiceDetails.Items.Any() || invoiceDetails == null)          
+                    throw new NotFoundException("فاکتور مورد نظر یافت نشد.");
+
+            return invoiceDetails;
         }
 
         public async Task<List<GetInvoiceDetailsDto>> GetByCustomerIdAsync(Guid customerId)
         {
             var userId = _httpContextAccessor.HttpContext.GetUserId();
+
+            if (userId == null || userId == Guid.Empty)
+                throw new UnauthorizedException("کاربر شناسایی نشد");
 
             var invoiceDetails = await _invoiceRepository.EntitiesAsNoTracking
                 .Where(i => i.CustomerId == customerId && i.UserId == userId)
