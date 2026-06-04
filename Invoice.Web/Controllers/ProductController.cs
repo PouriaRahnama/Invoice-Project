@@ -20,7 +20,6 @@
         /// </summary>
         [HttpGet]
         [DisplayName("واکشی محصول توسط شناسه")]
-        [AllowAnonymous]
         public async Task<OkApiResult<GetProductDetailsDto>> GetById([FromQuery] Guid id)
         {
             return OkApiResult<GetProductDetailsDto>.Ok(await _productService.GetByIdAsync(id));

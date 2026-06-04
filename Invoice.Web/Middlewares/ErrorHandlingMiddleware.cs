@@ -21,9 +21,8 @@ public class ErrorHandlingMiddleware
         {
             int statusCode = ex switch
             {
-                //NotFoundException => StatusCodes.Status404NotFound,
-                //ConflictException => StatusCodes.Status409Conflict,
-                UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+                NotFoundException => StatusCodes.Status404NotFound,
+                UnauthorizedException => StatusCodes.Status401Unauthorized,
                 BusinessException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };
