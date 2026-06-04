@@ -25,10 +25,10 @@
             var user = await _userRepository.EntitiesAsNoTracking
                 .FirstOrDefaultAsync(u => u.Username == loginUserAccountDto.Username);
 
-            if (user == null) throw new Exception("نام کاربری یا رمز عبور اشتباه می باشد.");
+            if (user == null) throw new BusinessException("نام کاربری یا رمز عبور اشتباه می باشد.");
 
             var hashPassowrd = EncryptionUtility.GetSHA256(loginUserAccountDto.Password, user.PasswordSalt);
-            if (user.PasswordHash != hashPassowrd) throw new Exception("نام کاربری یا رمز عبور اشتباه می باشد.");
+            if (user.PasswordHash != hashPassowrd) throw new BusinessException("نام کاربری یا رمز عبور اشتباه می باشد.");
 
             var accessToken = GetNewToken(user);
             TokenInfoDto token = new()
@@ -40,8 +40,7 @@
 
             return token;
         }
-
-        
+      
         public async Task<bool> RegisterUserAsync(RegisterUserAccountDto registerUserAccountDto)
         {
             var existingUser = await _userRepository.EntitiesAsNoTracking
@@ -61,7 +60,6 @@
 
             return true;
         }
-
         
         public async Task<IEnumerable<GetAllUserAccountsDto>> GetAllAsync(Guid? userId)
         {
@@ -79,21 +77,20 @@
 
             return productsProjected;
         }
-
-        
+      
         public async Task<GetUserAccountDetailsDto> GetCurrentUserInformation()
         {
             var userId = _httpContextAccessor.HttpContext.GetUserId();
 
             if (userId == null || userId == Guid.Empty)
-                throw new Exception("کاربر در سیستم وارد نشده است.");
+                throw new UnauthorizedException("کاربر احراز هویت نشده است");
 
             var user = await _userRepository
                 .EntitiesAsNoTracking.Where(p => p.Id == userId)
                 .ProjectTo<GetUserAccountDetailsDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();
 
-            if (user == null) throw new Exception("کاربر در سیستم وجود ندارد.");
+            if (user == null) throw new NotFoundException("کاربر در سیستم یافت نشد ");
 
             return user;
         }
@@ -124,7 +121,5 @@
             string accessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
             return accessToken;
         }
-
-
     }
 }
