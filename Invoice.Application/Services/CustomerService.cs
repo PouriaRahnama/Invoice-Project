@@ -20,7 +20,12 @@
         public async Task<Guid> CreateAsync(CreateCustomerDto createCustomerDto)
         {
             var customer = _mapper.Map<Customer>(createCustomerDto);
-            customer.UserId = _httpContextAccessor.HttpContext.GetUserId();
+            var userId = _httpContextAccessor.HttpContext.GetUserId();
+
+            if (userId == null || userId == Guid.Empty)
+                throw new UnauthorizedException("کاربر شناسایی نشد");
+
+            customer.UserId = userId;
 
             await _customerRepository.CreateAsync(customer);
             await _unitOfWork.SaveChangesAsync();
@@ -32,9 +37,10 @@
         {
             var existingCustomer = await _customerRepository.GetByIdAsync(updateCustomerDto.CustomerId);
 
-            if (existingCustomer == null) throw new Exception("مشتری پیدا نشد");
+            if (existingCustomer == null) throw new NotFoundException("مشتری پیدا نشد");
+
             if (existingCustomer.UserId != _httpContextAccessor.HttpContext.GetUserId())
-                throw new Exception("مشتری مربوط به شما نمی باشد.");
+                throw new BusinessException("مشتری مربوط به شما نمی باشد.");
 
             _mapper.Map(updateCustomerDto, existingCustomer);
 
@@ -47,10 +53,10 @@
         public async Task<bool> DeleteAsync(Guid customerId)
         {
             var existingCustomer = await _customerRepository.GetByIdAsync(customerId);
+            if (existingCustomer == null) throw new NotFoundException("مشتری پیدا نشد");
 
-            if (existingCustomer == null) throw new Exception("مشتری پیدا نشد");
             if (existingCustomer.UserId != _httpContextAccessor.HttpContext.GetUserId())
-                throw new Exception("مشتری مربوط به شما نمی باشد.");
+                throw new BusinessException("مشتری مربوط به شما نمی باشد.");
 
             await _customerRepository.DeleteAsync(existingCustomer.Id);
             await _unitOfWork.SaveChangesAsync();
@@ -62,27 +68,32 @@
         {
             var customers = _customerRepository.EntitiesAsNoTracking;
 
-            if (userId != Guid.Empty)
+            if (userId.HasValue && userId.Value != Guid.Empty)
                 customers = customers.Where(c => c.UserId == userId.Value);
 
-            var doctorsProjected = await customers
+            var customersProjected = await customers
                     .ProjectTo<GetAllCustomersDto>(_mapper.ConfigurationProvider)
                     .ToListAsync();
 
-            if (doctorsProjected == null || doctorsProjected.Count == 0)
+            if (customersProjected == null || customersProjected.Count == 0)
                 return new List<GetAllCustomersDto>();
 
-            return doctorsProjected;
+            return customersProjected;
         }
 
         public async Task<GetCustomerDetailsDto> GetByIdAsync(Guid customerId)
         {
+            var userId = _httpContextAccessor.HttpContext.GetUserId();
+
+            if (userId == null || userId == Guid.Empty)
+                throw new UnauthorizedException("کاربر شناسایی نشد");
+
             var customer = await _customerRepository
-                .EntitiesAsNoTracking.Where(c => c.Id == customerId)
+                .EntitiesAsNoTracking.Where(c => c.Id == customerId && c.UserId == userId)
                 .ProjectTo<GetCustomerDetailsDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();
 
-            if (customer == null) return new GetCustomerDetailsDto();
+            if (customer == null) throw new NotFoundException("مشتری پیدا نشد");
 
             return customer;
         }
