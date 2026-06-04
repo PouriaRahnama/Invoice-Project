@@ -29,7 +29,7 @@
             var existingProduct = await _productRepository.GetByIdAsync(productId);
 
             if (existingProduct == null)
-                throw new Exception("محصول مورد نظر پیدا نشد.");
+                throw new NotFoundException("محصول مورد نظر یافت نشد");
 
             await _productRepository.DeleteAsync(productId);
             await _unitOfWork.SaveChangesAsync();
@@ -58,7 +58,7 @@
                 .ProjectTo<GetProductDetailsDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();
 
-            if (product == null) return new GetProductDetailsDto();
+            if (product == null) throw new NotFoundException("محصول مورد نظر یافت نشد");
 
             return product;
         }
@@ -67,7 +67,7 @@
         {
             var existingProduct = await _productRepository.GetByIdAsync(updateProductDto.ProductId);
 
-            if (existingProduct == null) throw new Exception("محصول مورد نظر موجو نمی باشد");
+            if (existingProduct == null) throw new NotFoundException("محصول مورد نظر یافت نشد");
 
             _mapper.Map(updateProductDto, existingProduct);
 
