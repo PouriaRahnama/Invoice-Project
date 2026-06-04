@@ -76,7 +76,7 @@
                 var product = products.First(p => p.Id == itemDto.ProductId);
 
                 if (product.Quantity < itemDto.Quantity)
-                    throw new Exception($"موجودی محصول کافی نمی باشد. {product.Name}");
+                    throw new BusinessException($"موجودی محصول کافی نمی باشد. {product.Name}");
 
                 long unitPrice = product.Price; 
                 long totalBeforeDiscount = unitPrice * itemDto.Quantity;
