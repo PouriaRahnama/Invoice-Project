@@ -1,4 +1,6 @@
 ﻿
+using Invoice.Framework.Common;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -55,6 +57,11 @@ builder.Services.AddSwaggerGen(c =>
 
 var appName = builder.Environment.ApplicationName;
 SerilogConfig.ConfigureLogging(builder.Host, appName);
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = ApiBehaviorExtension.HandleValidationError;
+});
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

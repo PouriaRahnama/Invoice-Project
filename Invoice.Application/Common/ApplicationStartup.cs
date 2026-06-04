@@ -1,12 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace Invoice.Application.Common
+﻿namespace Invoice.Application.Common
 {
     public static class ApplicationStartup
     {
         public static void ApplicationConfigureServices(this IServiceCollection services, IConfiguration configuration)
         {
-
             #region serilog
             #endregion
 
@@ -83,8 +80,6 @@ namespace Invoice.Application.Common
             });
 
             #endregion
-
-
         }
     }
 }

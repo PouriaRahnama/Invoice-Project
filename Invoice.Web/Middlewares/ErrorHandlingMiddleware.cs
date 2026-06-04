@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Invoice.Web.Middlewares;
 
 public class ErrorHandlingMiddleware
@@ -17,20 +19,33 @@ public class ErrorHandlingMiddleware
         }
         catch (Exception ex)
         {
-            //var userId = context.GetUserInformation().Item1;
-            //var userIP = context.GetUserInformation().Item2;
-            //var commandName = context.Request.Path; 
-            //context.Response.StatusCode = 500;
+            int statusCode = ex switch
+            {
+                //NotFoundException => StatusCodes.Status404NotFound,
+                //ConflictException => StatusCodes.Status409Conflict,
+                UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+                BusinessException => StatusCodes.Status400BadRequest,
+                _ => StatusCodes.Status500InternalServerError
+            };
+            /*
+                200 → موفق
+                400 → خطای کاربر (Client Error)
+                500 → خطای سرور (Server Error)
+            
+             */
+
+            // تشخیص اینکه خطا از نوع بیزنس است یا سیستمی
+            if (ex is BusinessException)
+            {
+                statusCode = StatusCodes.Status400BadRequest;
+            }
+
+            context.Response.StatusCode = statusCode;
             string data = ex.Message.IsPersian() ? ex.Message :
             $"خطای غیرمنتظره‌ای رخ داده است. لطفا با پشتیبانی تماس بگیرید.";
 
-            await context.Response.WriteAsJsonAsync(new OkApiResult<string>()
-            {
-                Success = false,
-                Code = 500,
-                Data = data,
-                Message = ex.Message
-            });
+            await context.Response.WriteAsJsonAsync(OkApiResult<string>.Fail(
+                 null, statusCode, ex.Message));
         }
     }
 }

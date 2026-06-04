@@ -12,15 +12,17 @@ public class OkApiResult<T>
         };
     }
 
-    public static OkApiResult<T> Fail(string errorMessage, int code)
+    public static OkApiResult<T> Fail(string errorMessage, int code, string? message = "")
     {
         return new OkApiResult<T>
         {
             Success = false,
             Data = (T)(object)errorMessage, // چون Data جنریک هست
-            Code = code
+            Code = code,
+            Message = message
         };
     }
+
 
     public bool Success { get; set; }
     public T Data { get; set; }

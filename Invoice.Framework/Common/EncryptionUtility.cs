@@ -1,4 +1,6 @@
-﻿namespace Invoice.Application.Common
+﻿using System.Security.Cryptography;
+
+namespace Invoice.Framework.Common
 {
     public static class EncryptionUtility
     {

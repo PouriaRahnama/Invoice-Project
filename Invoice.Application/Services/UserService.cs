@@ -47,7 +47,7 @@
             var existingUser = await _userRepository.EntitiesAsNoTracking
                 .FirstOrDefaultAsync(u => u.Username == registerUserAccountDto.Username || u.Phone == registerUserAccountDto.Phone);
 
-            if (existingUser != null) throw new Exception("کاربر از قبل وجود دارد");
+            if (existingUser != null) throw new BusinessException("کاربر از قبل وجود دارد");
 
             string passwordSalt = EncryptionUtility.GetNewSalt();
             string passwordHash = EncryptionUtility.GetSHA256(registerUserAccountDto.Password, passwordSalt);
