@@ -6,6 +6,6 @@ namespace Invoice.Application.Interfaces
     {
         Task<Guid> CreateAsync(CreateUserRefreshTokenDto createUserRefreshTokenDto);
         Task<GenerateNewUserRefreshTokenDto> GenerateNewUserRefreshTokenAsync(string refreshToken);
-        Task RevokeAsync(string refreshToken);
+        Task<bool> RevokeAsync(string refreshToken);
     }
 }

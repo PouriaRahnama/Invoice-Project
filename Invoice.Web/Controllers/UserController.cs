@@ -1,4 +1,6 @@
-﻿namespace Invoice.Web.Controllers
+﻿using Invoice.Application.Dtos.UserRefreshTokenDto;
+
+namespace Invoice.Web.Controllers
 {
     public class UserController : ApiBaseController
     {
@@ -26,6 +28,28 @@
         public async Task<OkApiResult<TokenInfoDto>> Login([FromBody] LoginUserAccountDto loginUserAccountDto)
         {
             return OkApiResult<TokenInfoDto>.Ok(await _userService.LoginUserAsync(loginUserAccountDto));
+        }
+
+        /// <summary>
+        /// دریافت توکن جدید با رفرش توکن
+        /// </summary>
+        [HttpPost]
+        [DisplayName("دریافت توکن جدید با رفرش توکن")]
+        [AllowAnonymous]
+        public async Task<OkApiResult<GenerateNewUserRefreshTokenDto>> GenerateNewToken([FromBody] string refreshToken)
+        {
+            return OkApiResult<GenerateNewUserRefreshTokenDto>
+                .Ok(await _userRefreshTokenService.GenerateNewUserRefreshTokenAsync(refreshToken));
+        }
+
+        /// <summary>
+        /// خروج از سیستم
+        /// </summary>
+        [HttpPost]
+        [DisplayName("خروج از سیستم")]
+        public async Task<OkApiResult<bool>> Logout([FromBody] string refreshToken)
+        {
+            return OkApiResult<bool>.Ok(await _userRefreshTokenService.RevokeAsync(refreshToken));
         }
 
         /// <summary>

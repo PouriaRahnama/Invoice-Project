@@ -14,7 +14,7 @@ namespace Invoice.Infrastructure.Common
             services.AddScoped<IInvoiceItemRepository, InvoiceItemRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
-
+            services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

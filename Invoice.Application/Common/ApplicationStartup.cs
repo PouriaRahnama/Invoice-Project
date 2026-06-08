@@ -14,6 +14,7 @@
                   Assembly.GetExecutingAssembly()
               );
 
+            services.AddScoped<IUserRefreshTokenService, UserRefreshTokenService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICustomerService, CustomerService>();

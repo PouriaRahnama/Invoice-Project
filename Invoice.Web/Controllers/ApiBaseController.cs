@@ -30,5 +30,10 @@ public class ApiBaseController : ControllerBase
     protected IInvoiceService _invoiceService => invoiceService
         ??= HttpContext.RequestServices.GetRequiredService<IInvoiceService>();
 
+
+    private IUserRefreshTokenService userRefreshTokenService;
+    protected IUserRefreshTokenService _userRefreshTokenService => userRefreshTokenService
+        ??= HttpContext.RequestServices.GetRequiredService<IUserRefreshTokenService>();
+
 }
 

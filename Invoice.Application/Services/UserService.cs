@@ -8,12 +8,15 @@
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserRefreshTokenService _userRefreshTokenService;
+
         public UserService(IUserRepository userRepository,
             IUnitOfWork unitOfWork,
             IMapper mapper,
             IOptions<JwtSettings> jwtSettings,
             IHttpContextAccessor httpContextAccessor,
-            JwtTokenUtility jwtTokenUtility)
+            JwtTokenUtility jwtTokenUtility,
+            IUserRefreshTokenService userRefreshTokenService)
         {
             this._userRepository = userRepository;
             this._unitOfWork = unitOfWork;
@@ -21,6 +24,7 @@
             this._jwtSettings = jwtSettings.Value;
             this._httpContextAccessor = httpContextAccessor;
             this._jwtTokenUtility = jwtTokenUtility;
+            this._userRefreshTokenService = userRefreshTokenService;
         }
         
         public async Task<TokenInfoDto> LoginUserAsync(LoginUserAccountDto loginUserAccountDto)
@@ -35,6 +39,12 @@
 
             var accessToken = _jwtTokenUtility.GetNewToken(user);
             var refreshToken =  _jwtTokenUtility.GetNewRefreshToken();
+
+            await _userRefreshTokenService.CreateAsync(new CreateUserRefreshTokenDto
+            {
+                UserId = user.Id,
+                RefreshToken = refreshToken
+            });
 
             TokenInfoDto token = new()
             {

@@ -6,7 +6,7 @@ internal class InvoiceConfiguration : IEntityTypeConfiguration<Invoice.Domain.En
     {
         builder.HasKey(x => x.Id);
         builder.ToTable("Invoice");
-        builder.HasQueryFilter(x => !EF.Property<bool>(x, "IsDeleted"));
+        //builder.HasQueryFilter(x => !EF.Property<bool>(x, "IsDeleted"));
         // Relations
         builder.HasMany(e => e.Items)
                .WithOne(e => e.Invoice)

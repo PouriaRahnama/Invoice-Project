@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-
 namespace Invoice.Framework.Common;
 
 public static class Extensions
@@ -223,6 +222,20 @@ public static class Extensions
         return CryptographicOperations.FixedTimeEquals(
             Encoding.UTF8.GetBytes(inputHash),
             Encoding.UTF8.GetBytes(hash));
+    }
+
+
+    public static string GetDeviceName(this HttpContext httpContext)
+    {
+        if (httpContext == null)
+            return "";
+
+        var userAgent = httpContext.Request.Headers["User-Agent"].ToString();
+
+        if (string.IsNullOrWhiteSpace(userAgent))
+            return "Unknown Device";
+
+        return userAgent;
     }
 }
 
