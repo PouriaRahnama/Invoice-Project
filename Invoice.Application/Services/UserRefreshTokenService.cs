@@ -38,7 +38,7 @@
             return userRefreshToken.Id;
         }
 
-        public async Task<GenerateNewUserRefreshTokenDto> GenerateNewUserRefreshTokenAsync(string refreshToken)
+        public async Task<TokenInfoDto> GenerateNewUserTokenAsync(string refreshToken)
         {
             var storedToken = await _userRefreshTokenRepository.Entities
                 .SingleOrDefaultAsync(rf => rf.RefreshToken == Extensions.ComputeSha256(refreshToken));
@@ -74,11 +74,11 @@
             await _userRefreshTokenRepository.CreateAsync(newToken);
             await _unitOfWork.SaveChangesAsync();
 
-            return new GenerateNewUserRefreshTokenDto
+            return new TokenInfoDto
             {
-                Token = newAccessToken,
+                AccessToken = newAccessToken,
                 RefreshToken = newRefreshToken,
-                ExpireDate = expireDate
+                AccessTokenExpires = DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes)
             };
         }
 

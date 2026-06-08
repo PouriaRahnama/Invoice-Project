@@ -6,8 +6,7 @@
         {
             builder.HasKey(x => x.Id);
             builder.ToTable("UserRefreshTokens");
-
-            //builder.HasQueryFilter(x => !EF.Property<bool>(x, "IsDeleted"));
+            builder.HasQueryFilter(x => !EF.Property<bool>(x, "IsDeleted"));
 
             builder.Property(x => x.RefreshToken)
                 .IsRequired();

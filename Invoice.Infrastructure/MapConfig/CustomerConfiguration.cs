@@ -6,7 +6,7 @@ internal class CustomerConfiguration : IEntityTypeConfiguration<Customer>
     {
         builder.HasKey(x => x.Id);
         builder.ToTable("Customers");
-        //builder.HasQueryFilter(x => !EF.Property<bool>(x, "IsDeleted"));
+        builder.HasQueryFilter(x => !EF.Property<bool>(x, "IsDeleted"));
         // Relations
         builder.HasMany(e => e.Invoices)
                .WithOne(e => e.Customer)

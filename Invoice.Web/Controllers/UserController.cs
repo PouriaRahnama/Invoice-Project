@@ -36,10 +36,10 @@ namespace Invoice.Web.Controllers
         [HttpPost]
         [DisplayName("دریافت توکن جدید با رفرش توکن")]
         [AllowAnonymous]
-        public async Task<OkApiResult<GenerateNewUserRefreshTokenDto>> GenerateNewToken([FromBody] string refreshToken)
+        public async Task<OkApiResult<TokenInfoDto>> GenerateNewToken([FromBody] string refreshToken)
         {
-            return OkApiResult<GenerateNewUserRefreshTokenDto>
-                .Ok(await _userRefreshTokenService.GenerateNewUserRefreshTokenAsync(refreshToken));
+            return OkApiResult<TokenInfoDto>
+                .Ok(await _userRefreshTokenService.GenerateNewUserTokenAsync(refreshToken));
         }
 
         /// <summary>

@@ -8,7 +8,7 @@ namespace Invoice.Infrastructure.MapConfig
         {
             builder.HasKey(x => x.Id);
             builder.ToTable("Users");
-           // builder.HasQueryFilter(x => !EF.Property<bool>(x, "IsDeleted"));
+            builder.HasQueryFilter(x => !EF.Property<bool>(x, "IsDeleted"));
             builder.HasIndex(x => x.Username);
             // Relations
             builder.HasMany(e => e.Customers)
