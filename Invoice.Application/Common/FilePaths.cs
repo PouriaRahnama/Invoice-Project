@@ -4,6 +4,6 @@
     {
         public const string ProductImages = "/images/products/";
 
-        public const string ProductImagePathSave = "wwwroot/images/products";
+        public const string ProductImagePathSave = "wwwroot/images/products/";
     }
 }

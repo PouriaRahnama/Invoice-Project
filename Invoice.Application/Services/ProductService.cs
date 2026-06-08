@@ -1,8 +1,4 @@
-﻿using Humanizer;
-using Invoice.Application.Dtos.ProductDtos;
-using Invoice.Domain.Entities;
-
-namespace Invoice.Application.Services
+﻿namespace Invoice.Application.Services
 {
     public class ProductService : IProductService
     {
@@ -77,7 +73,6 @@ namespace Invoice.Application.Services
         public async Task<bool> UpdateAsync(UpdateProductDto updateProductDto)
         {
             var existingProduct = await _productRepository.GetByIdAsync(updateProductDto.ProductId);
-
             if (existingProduct == null) throw new NotFoundException("محصول مورد نظر یافت نشد");
 
             _mapper.Map(updateProductDto, existingProduct);
@@ -85,12 +80,11 @@ namespace Invoice.Application.Services
             if (updateProductDto.Image != null)
             {
                 if (!string.IsNullOrEmpty(existingProduct.ImagePath))
-                    Extensions.DeleteFile(existingProduct.ImagePath, FilePaths.ProductImagePathSave);
+                    Extensions.DeleteFile(FilePaths.ProductImagePathSave, existingProduct.ImagePath);
 
                 existingProduct.ImagePath = await Extensions
                   .SaveImageAndGenerateName(updateProductDto.Image, FilePaths.ProductImagePathSave);
             }
-
 
             _productRepository.Update(existingProduct);
             await _unitOfWork.SaveChangesAsync();
