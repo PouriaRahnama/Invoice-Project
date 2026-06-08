@@ -56,6 +56,13 @@ public static class Extensions
         if (imageFile == null)
             throw new InvalidDataException("file is Null");
 
+        var allowed = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+
+        var ext = Path.GetExtension(imageFile.FileName).ToLower();
+
+        if (!allowed.Contains(ext))
+            throw new Exception("Invalid image format");
+
         var fileName = imageFile.FileName;
         fileName = Guid.NewGuid() + DateTime.Now.TimeOfDay.ToString()
                           .Replace(":", "")

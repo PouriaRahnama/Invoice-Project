@@ -11,7 +11,10 @@
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.CreatedDateTime,
-                opt => opt.MapFrom(src => EF.Property<DateTime?>(src, "CreatedDateTime")));
+                opt => opt.MapFrom(src => EF.Property<DateTime?>(src, "CreatedDateTime")))
+                .ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src => src.ImagePath == null
+                    ? null
+                    : FilePaths.ProductImages + src.ImagePath));
 
 
 
@@ -22,12 +25,16 @@
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.CreatedDateTime,
-                opt => opt.MapFrom(src => EF.Property<DateTime?>(src, "CreatedDateTime")));
+                opt => opt.MapFrom(src => EF.Property<DateTime?>(src, "CreatedDateTime")))
+                .ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src => src.ImagePath == null
+                    ? null
+                    : FilePaths.ProductImages + src.ImagePath));
 
 
 
             CreateMap<CreateProductDto, Product>()
                 .ForMember(dest => dest.Code, opt => opt.Ignore())
+                .ForMember(dest => dest.ImagePath, opt => opt.Ignore())
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
@@ -38,6 +45,7 @@
 
             CreateMap<UpdateProductDto, Product>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.ImagePath, opt => opt.Ignore())
                 .ForMember(dest => dest.Code, opt => opt.Ignore())
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))

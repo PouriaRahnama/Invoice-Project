@@ -12,6 +12,7 @@ public class Product : BaseEntity
     public required string Code { get; set; }
     public required int Price { get; set; }
     public required int Quantity { get; set; }
+    public string? ImagePath { get; set; }
 
 
     public ICollection<InvoiceItem> InvoiceItems { get; set; }
