@@ -1,4 +1,6 @@
-﻿namespace Invoice.Infrastructure.MapConfig
+﻿using Invoice.Domain.Common;
+
+namespace Invoice.Infrastructure.MapConfig
 {
     public class UserConfiguration : IEntityTypeConfiguration<User>
     {

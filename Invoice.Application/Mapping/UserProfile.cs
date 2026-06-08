@@ -23,9 +23,6 @@
                 .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
                 .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore()) 
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
-
-
-
         }
     }
 }

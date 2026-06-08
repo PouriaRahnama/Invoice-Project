@@ -19,10 +19,6 @@ namespace Invoice.Framework.Common
             return Guid.NewGuid().ToString();
         }
 
-        public static string GetNewRefreshToken()
-        {
-            return Guid.NewGuid().ToString();
-        }
 
 
     }

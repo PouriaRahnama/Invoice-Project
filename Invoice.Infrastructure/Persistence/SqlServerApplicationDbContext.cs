@@ -27,6 +27,5 @@ public class SqlServerApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<InvoiceItem> invoiceItems { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<User> Users { get; set; }
-
-
+    public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
 }

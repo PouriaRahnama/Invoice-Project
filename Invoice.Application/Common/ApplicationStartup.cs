@@ -18,12 +18,12 @@
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IInvoiceService, InvoiceService>();
-
+            services.AddSingleton<JwtTokenUtility>();
             #endregion
 
             #region Idp Registration
 
- 
+
             var jwtSettings = configuration.GetSection("JwtSettings");
 
             //// Add JWT Authentication

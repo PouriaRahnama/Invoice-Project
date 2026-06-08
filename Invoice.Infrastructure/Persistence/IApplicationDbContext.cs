@@ -18,4 +18,5 @@ public interface IApplicationDbContext: IDisposable
     DbSet<InvoiceItem> invoiceItems { get; set; }
     DbSet<Product> Products { get; set; }
     DbSet<User> Users { get; set; }
+    DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
 }

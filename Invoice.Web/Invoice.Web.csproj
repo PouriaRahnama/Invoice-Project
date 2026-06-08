@@ -21,8 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Invoice.Application\Invoice.Application.csproj" />
-    <ProjectReference Include="..\Invoice.Framework\Invoice.Framework.csproj" />
-    <ProjectReference Include="..\Invoice.Infrastructure\Invoice.Infrastructure.csproj" />
 	  
   </ItemGroup>
 	<PropertyGroup>

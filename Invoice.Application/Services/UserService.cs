@@ -2,6 +2,7 @@
 {
     public class UserService : IUserService
     {
+        private readonly JwtTokenUtility _jwtTokenUtility;
         private readonly JwtSettings _jwtSettings;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
@@ -11,13 +12,15 @@
             IUnitOfWork unitOfWork,
             IMapper mapper,
             IOptions<JwtSettings> jwtSettings,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            JwtTokenUtility jwtTokenUtility)
         {
             this._userRepository = userRepository;
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
             this._jwtSettings = jwtSettings.Value;
             this._httpContextAccessor = httpContextAccessor;
+            this._jwtTokenUtility = jwtTokenUtility;
         }
         
         public async Task<TokenInfoDto> LoginUserAsync(LoginUserAccountDto loginUserAccountDto)
@@ -30,11 +33,13 @@
             var hashPassowrd = EncryptionUtility.GetSHA256(loginUserAccountDto.Password, user.PasswordSalt);
             if (user.PasswordHash != hashPassowrd) throw new BusinessException("نام کاربری یا رمز عبور اشتباه می باشد.");
 
-            var accessToken = GetNewToken(user);
+            var accessToken = _jwtTokenUtility.GetNewToken(user);
+            var refreshToken =  _jwtTokenUtility.GetNewRefreshToken();
+
             TokenInfoDto token = new()
             {
                 AccessToken = accessToken,
-                RefreshToken = EncryptionUtility.GetNewRefreshToken(),
+                RefreshToken = refreshToken,
                 AccessTokenExpires = DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes)
             };
 
@@ -95,31 +100,6 @@
             return user;
         }
 
-        /// <summary>
-        /// jwt تولید توکن 
-        /// </summary>
-        private string GetNewToken(User user)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username.ToString() ?? ""),
-                new Claim(ClaimTypes.MobilePhone,user.Phone.ToString() ?? ""),
-            };
 
-            int expireTime = _jwtSettings.DurationInMinutes;
-            var _key = _jwtSettings.Key;
-            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));
-            var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
-            var jwtToken = new JwtSecurityToken(
-                issuer: _jwtSettings.Issuer,
-                audience: _jwtSettings.Audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(expireTime),
-                signingCredentials: signingCredentials);
-
-            string accessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
-            return accessToken;
-        }
     }
 }

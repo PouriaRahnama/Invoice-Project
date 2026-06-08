@@ -27,3 +27,5 @@ global using Invoice.Application.Dtos.InvoiceDtos;
 global using Microsoft.CodeAnalysis;
 global using Invoice.Application.Services;
 global using System.Security.Cryptography;
+global using Invoice.Application.Dtos.UserRefreshTokenDto;
+global using Extensions = Invoice.Framework.Common.Extensions;

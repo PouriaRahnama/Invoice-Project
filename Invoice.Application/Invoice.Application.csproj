@@ -12,8 +12,6 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.20" />
 	</ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Invoice.Domain\Invoice.Domain.csproj" />
-    <ProjectReference Include="..\Invoice.Framework\Invoice.Framework.csproj" />
     <ProjectReference Include="..\Invoice.Infrastructure\Invoice.Infrastructure.csproj" />
   </ItemGroup>
 

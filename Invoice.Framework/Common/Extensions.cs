@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace Invoice.Framework.Common;
 
@@ -204,6 +205,24 @@ public static class Extensions
 
         // چک کردن وجود حداقل یک کاراکتر فارسی
         return Regex.IsMatch(input, @"[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]");
+    }
+    public static string ComputeSha256(string input)
+    {
+        using var sha256 = SHA256.Create();
+
+        var bytes = Encoding.UTF8.GetBytes(input);
+        var hash = sha256.ComputeHash(bytes);
+
+        return Convert.ToBase64String(hash);
+    }
+
+    public static bool VerifySha256(string input, string hash)
+    {
+        var inputHash = ComputeSha256(input);
+
+        return CryptographicOperations.FixedTimeEquals(
+            Encoding.UTF8.GetBytes(inputHash),
+            Encoding.UTF8.GetBytes(hash));
     }
 }
 
