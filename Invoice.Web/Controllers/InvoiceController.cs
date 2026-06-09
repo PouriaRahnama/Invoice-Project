@@ -32,9 +32,9 @@ public class InvoiceController : ApiBaseController
     /// </summary>
     [HttpGet]
     [DisplayName("واکشی فاکتورها توسط شناسه مشتری")]
-    public async Task<OkApiResult<IEnumerable<GetInvoiceDetailsDto>>> GetByCustomerId([FromQuery] Guid customerId)
+    public async Task<OkApiResult<SearchQueryResponse<GetInvoiceDetailsDto>>> GetByCustomerId([FromQuery] FilterInvoincesDto QueryParams)
     {
-        return OkApiResult<IEnumerable<GetInvoiceDetailsDto>>.Ok(await _invoiceService.GetByCustomerIdAsync(customerId));
+        return OkApiResult<SearchQueryResponse<GetInvoiceDetailsDto>>.Ok(await _invoiceService.GetByCustomerIdAsync(QueryParams));
     }
 
     /// <summary>

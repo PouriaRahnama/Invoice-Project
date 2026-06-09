@@ -33,7 +33,7 @@ global using Gridify;
 global using Gridify.EntityFramework;
 global using Invoice.Application.GridifyMappers;
 global using Invoice.Framework.GenericFilters;
-
-
+global using System.ComponentModel;
+global using System.ComponentModel.DataAnnotations;
 
 

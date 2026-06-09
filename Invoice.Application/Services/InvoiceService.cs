@@ -127,23 +127,24 @@
             return invoiceDetails;
         }
 
-        public async Task<List<GetInvoiceDetailsDto>> GetByCustomerIdAsync(Guid customerId)
+        public async Task<SearchQueryResponse<GetInvoiceDetailsDto>> GetByCustomerIdAsync(FilterInvoincesDto QueryParams)
         {
+            var mapper = new InvoiceGridifyMapper();
             var userId = _httpContextAccessor.HttpContext.GetUserId();
 
             if (userId == null || userId == Guid.Empty)
                 throw new UnauthorizedException("کاربر شناسایی نشد");
 
-            var invoiceDetails = await _invoiceRepository.EntitiesAsNoTracking
-                .Where(i => i.CustomerId == customerId && i.UserId == userId)
+            var query = _invoiceRepository.EntitiesAsNoTracking
+                .Where(i => i.CustomerId == QueryParams.CustomerId && i.UserId == userId)
                 .ProjectTo<GetInvoiceDetailsDto>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+                .AsQueryable();
 
+            var qp = await query.GridifyQueryableAsync(QueryParams, mapper);
 
-            if (invoiceDetails == null || invoiceDetails.Count == 0)
-                return new List<GetInvoiceDetailsDto>();
+            var pq = new Paging<GetInvoiceDetailsDto>(qp.Count, qp.Query);
+            return new SearchQueryResponse<GetInvoiceDetailsDto>(QueryParams, pq);
 
-            return invoiceDetails;
         }
 
         private async Task<string> GenerateInvoiceNumberAsync()
