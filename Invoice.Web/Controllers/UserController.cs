@@ -57,10 +57,9 @@ namespace Invoice.Web.Controllers
         /// </summary>
         [HttpGet]
         [DisplayName("واکشی کاربران سیستم - واکشی کاربر توسط شناسه")]
-        public async Task<OkApiResult<IEnumerable<GetAllUserAccountsDto>>> GetAll([FromQuery] Guid? userId)
+        public async Task<OkApiResult<SearchQueryResponse<GetAllUserAccountsDto>>> GetAll([FromQuery] FilterUsersDto QueryParams)
         {
-            var id = userId.HasValue ? userId.Value : Guid.Empty;
-            return OkApiResult<IEnumerable<GetAllUserAccountsDto>>.Ok(await _userService.GetAllAsync(id));
+            return OkApiResult<SearchQueryResponse<GetAllUserAccountsDto>>.Ok(await _userService.GetAllAsync(QueryParams));
         }
 
         /// <summary>

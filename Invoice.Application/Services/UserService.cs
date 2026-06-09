@@ -26,7 +26,7 @@
             this._jwtTokenUtility = jwtTokenUtility;
             this._userRefreshTokenService = userRefreshTokenService;
         }
-        
+
         public async Task<TokenInfoDto> LoginUserAsync(LoginUserAccountDto loginUserAccountDto)
         {
             var user = await _userRepository.EntitiesAsNoTracking
@@ -38,7 +38,7 @@
             if (user.PasswordHash != hashPassowrd) throw new BusinessException("نام کاربری یا رمز عبور اشتباه می باشد.");
 
             var accessToken = _jwtTokenUtility.GetNewToken(user);
-            var refreshToken =  _jwtTokenUtility.GetNewRefreshToken();
+            var refreshToken = _jwtTokenUtility.GetNewRefreshToken();
 
             await _userRefreshTokenService.CreateAsync(new CreateUserRefreshTokenDto
             {
@@ -55,7 +55,7 @@
 
             return token;
         }
-      
+
         public async Task<bool> RegisterUserAsync(RegisterUserAccountDto registerUserAccountDto)
         {
             var existingUser = await _userRepository.EntitiesAsNoTracking
@@ -75,24 +75,21 @@
 
             return true;
         }
-        
-        public async Task<IEnumerable<GetAllUserAccountsDto>> GetAllAsync(Guid? userId)
+
+        public async Task<SearchQueryResponse<GetAllUserAccountsDto>> GetAllAsync(FilterUsersDto QueryParams)
         {
-            var users = _userRepository.EntitiesAsNoTracking;
+            var mapper = new UserGridifyMapper();
 
-            if (userId != Guid.Empty)
-                users = users.Where(c => c.Id == userId.Value);
-
-            var productsProjected = await users
+            var query = _userRepository.EntitiesAsNoTracking
                 .ProjectTo<GetAllUserAccountsDto>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+                .AsQueryable();
 
-            if (productsProjected == null || productsProjected.Count == 0)
-                return new List<GetAllUserAccountsDto>();
+            var qp = await query.GridifyQueryableAsync(QueryParams, mapper);
 
-            return productsProjected;
+            var pq = new Paging<GetAllUserAccountsDto>(qp.Count, qp.Query);
+            return new SearchQueryResponse<GetAllUserAccountsDto>(QueryParams, pq);
         }
-      
+
         public async Task<GetUserAccountDetailsDto> GetCurrentUserInformation()
         {
             var userId = _httpContextAccessor.HttpContext.GetUserId();
