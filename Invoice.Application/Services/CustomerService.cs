@@ -1,4 +1,5 @@
-﻿namespace Invoice.Application.Services
+﻿using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+namespace Invoice.Application.Services
 {
     public class CustomerService : ICustomerService
     {
@@ -64,21 +65,17 @@
             return true;
         }
 
-        public async Task<IEnumerable<GetAllCustomersDto>> GetAllAsync(Guid? userId)
+        public async Task<SearchQueryResponse<GetAllCustomersDto>> GetAllAsync(FilterCustomersDto QueryParams)
         {
-            var customers = _customerRepository.EntitiesAsNoTracking;
-
-            if (userId.HasValue && userId.Value != Guid.Empty)
-                customers = customers.Where(c => c.UserId == userId.Value);
-
-            var customersProjected = await customers
+            var mapper = new CustomerGridifyMapper();
+            var query = _customerRepository.EntitiesAsNoTracking
                     .ProjectTo<GetAllCustomersDto>(_mapper.ConfigurationProvider)
-                    .ToListAsync();
+                     .AsQueryable();
 
-            if (customersProjected == null || customersProjected.Count == 0)
-                return new List<GetAllCustomersDto>();
+            var qp = await query.GridifyQueryableAsync(QueryParams, mapper);
 
-            return customersProjected;
+            var pq = new Paging<GetAllCustomersDto>(qp.Count, qp.Query);
+            return new SearchQueryResponse<GetAllCustomersDto>(QueryParams, pq);
         }
 
         public async Task<GetCustomerDetailsDto> GetByIdAsync(Guid customerId)

@@ -10,10 +10,9 @@
         /// </summary>
         [HttpGet]
         [DisplayName("واکشی مشتریان - واکشی مشتریان ثبت شده توسط کاربر سیستم")]
-        public async Task<OkApiResult<IEnumerable<GetAllCustomersDto>>> GetAll([FromQuery] Guid? userId)
+        public async Task<OkApiResult<SearchQueryResponse<GetAllCustomersDto>>> GetAll([FromQuery] FilterCustomersDto QueryParams)
         {
-            var id = userId.HasValue ? userId.Value : Guid.Empty;
-            return OkApiResult<IEnumerable<GetAllCustomersDto>>.Ok(await _customerService.GetAllAsync(id));
+            return OkApiResult<SearchQueryResponse<GetAllCustomersDto>>.Ok(await _customerService.GetAllAsync(QueryParams));
         }
 
         /// <summary>

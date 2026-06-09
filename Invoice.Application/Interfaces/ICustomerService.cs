@@ -2,7 +2,7 @@
 {
     public interface ICustomerService
     {
-        Task<IEnumerable<GetAllCustomersDto>> GetAllAsync(Guid? userId);
+        Task<SearchQueryResponse<GetAllCustomersDto>> GetAllAsync(FilterCustomersDto QueryParams);
 
         Task<GetCustomerDetailsDto> GetByIdAsync(Guid customerId);
 

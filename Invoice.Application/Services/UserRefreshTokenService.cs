@@ -23,7 +23,7 @@
             this._jwtSettings = jwtSettings.Value;
             this._jwtTokenUtility = jwtTokenUtility;
             this._userRepository = userRepository;
-            _httpContextAccessor = httpContextAccessor;
+            this._httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Guid> CreateAsync(CreateUserRefreshTokenDto createUserRefreshTokenDto)

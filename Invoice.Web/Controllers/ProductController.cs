@@ -10,7 +10,7 @@
         [HttpGet]
         [DisplayName("واکشی تمام محصولات")]
         [AllowAnonymous]
-        public async Task<OkApiResult<SearchQueryResponse<GetAllProductsDto>>> GetAll([FromQuery] FilterProductDto QueryParams)
+        public async Task<OkApiResult<SearchQueryResponse<GetAllProductsDto>>> GetAll([FromQuery] FilterProductsDto QueryParams)
         {
             return OkApiResult<SearchQueryResponse<GetAllProductsDto>>.Ok(await _productService.GetAllAsync(QueryParams));
         }

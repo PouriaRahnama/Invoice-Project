@@ -44,7 +44,7 @@
             return true;
         }
 
-        public async Task<SearchQueryResponse<GetAllProductsDto>> GetAllAsync(FilterProductDto QueryParams)
+        public async Task<SearchQueryResponse<GetAllProductsDto>> GetAllAsync(FilterProductsDto QueryParams)
         {
             var mapper = new ProductGridifyMapper();
 
