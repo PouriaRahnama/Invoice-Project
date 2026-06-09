@@ -21,7 +21,7 @@ global using Serilog.Formatting.Json;
 global using Serilog.Core;
 global using Invoice.Web.Configuration;
 global using System.Reflection;
-
+global using Invoice.Framework.GenericFilters;
 
 
 

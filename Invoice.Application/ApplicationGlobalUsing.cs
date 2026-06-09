@@ -29,3 +29,11 @@ global using Invoice.Application.Services;
 global using System.Security.Cryptography;
 global using Invoice.Application.Dtos.UserRefreshTokenDto;
 global using Extensions = Invoice.Framework.Common.Extensions;
+global using Gridify;
+global using Gridify.EntityFramework;
+global using Invoice.Application.GridifyMappers;
+global using Invoice.Framework.GenericFilters;
+
+
+
+

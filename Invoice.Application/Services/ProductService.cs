@@ -44,18 +44,18 @@
             return true;
         }
 
-        public async Task<IEnumerable<GetAllProductsDto>> GetAllAsync()
+        public async Task<SearchQueryResponse<GetAllProductsDto>> GetAllAsync(FilterProductDto QueryParams)
         {
-            IQueryable<Product> products = _productRepository.EntitiesAsNoTracking;
+            var mapper = new ProductGridifyMapper();
 
-            var productsProjected = await products
+            var query = _productRepository.EntitiesAsNoTracking
                     .ProjectTo<GetAllProductsDto>(_mapper.ConfigurationProvider)
-                    .ToListAsync();
+                    .AsQueryable();
 
-            if (productsProjected == null || productsProjected.Count == 0)
-                return new List<GetAllProductsDto>();
+            var qp = await query.GridifyQueryableAsync(QueryParams, mapper);
 
-            return productsProjected;
+            var pq = new Paging<GetAllProductsDto>(qp.Count, qp.Query);
+            return new SearchQueryResponse<GetAllProductsDto>(QueryParams, pq);
         }
 
         public async Task<GetProductDetailsDto> GetByIdAsync(Guid productId)

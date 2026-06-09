@@ -1,8 +1,10 @@
-﻿namespace Invoice.Application.Interfaces
+﻿using Invoice.Framework.GenericFilters;
+
+namespace Invoice.Application.Interfaces
 {
     public interface IProductService
     {
-        Task<IEnumerable<GetAllProductsDto>> GetAllAsync();
+        Task<SearchQueryResponse<GetAllProductsDto>> GetAllAsync(FilterProductDto QueryParams);
         Task<GetProductDetailsDto> GetByIdAsync(Guid productId);
         Task<Guid> CreateAsync(CreateProductDto createProductDto);
         Task<bool> UpdateAsync(UpdateProductDto updateProductDto);
