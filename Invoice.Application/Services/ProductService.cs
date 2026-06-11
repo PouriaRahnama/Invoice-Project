@@ -50,6 +50,7 @@
 
             var query = _productRepository.EntitiesAsNoTracking
                     .ProjectTo<GetAllProductsDto>(_mapper.ConfigurationProvider)
+                    .OrderByDescending(x => EF.Property<DateTime>(x, "CreatedDateTime"))
                     .AsQueryable();
 
             var qp = await query.GridifyQueryableAsync(QueryParams, mapper);

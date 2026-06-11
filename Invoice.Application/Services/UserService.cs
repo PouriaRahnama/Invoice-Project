@@ -82,6 +82,7 @@
 
             var query = _userRepository.EntitiesAsNoTracking
                 .ProjectTo<GetAllUserAccountsDto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(x => EF.Property<DateTime>(x, "CreatedDateTime"))
                 .AsQueryable();
 
             var qp = await query.GridifyQueryableAsync(QueryParams, mapper);
