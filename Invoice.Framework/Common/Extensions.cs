@@ -61,7 +61,7 @@ public static class Extensions
         var ext = Path.GetExtension(imageFile.FileName).ToLower();
 
         if (!allowed.Contains(ext))
-            throw new Exception("Invalid image format");
+            throw new Exception("فرمت وارد شده نامعتبر است!");
 
         var fileName = imageFile.FileName;
         fileName = Guid.NewGuid() + DateTime.Now.TimeOfDay.ToString()
