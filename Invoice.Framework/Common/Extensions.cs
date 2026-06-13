@@ -30,10 +30,10 @@ public static class Extensions
         var userIdValue = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
         if (Guid.TryParse(userIdValue, out Guid userId))
         {
-            return userId == Guid.Empty ? throw new UnauthorizedAccessException() : userId;
+            return userId == Guid.Empty ? throw new UnauthorizedException("کاربر شناسایی نشد") : userId;
         }
 
-        throw new UnauthorizedAccessException();
+        throw new UnauthorizedException("کاربر شناسایی نشد");
     }
     public static Tuple<long?, string?> GetUserInformation(this HttpContext? httpContext)
     {
