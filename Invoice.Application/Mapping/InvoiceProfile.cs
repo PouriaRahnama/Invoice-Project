@@ -14,8 +14,8 @@
 
             CreateMap<Invoice.Domain.Entities.Invoice, GetInvoiceDetailsDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src =>
-                    src.Status == Status.Pending ? "در انتظار" :
-                    src.Status == Status.Paid ? "پرداخت شده" : " "))
+                    src.Status == Status.Pending ? 20 :
+                    src.Status == Status.Paid ? 10 : 0))
                 .ForMember(dest => dest.InvoiceNumber, opt => opt.MapFrom(src => src.InvoiceNumber))
                 .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice.ToString("N0")))
                 .ForMember(dest => dest.InvoiceId, opt => opt.MapFrom(src => src.Id))
