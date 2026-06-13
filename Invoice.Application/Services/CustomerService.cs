@@ -70,6 +70,7 @@ namespace Invoice.Application.Services
             var mapper = new CustomerGridifyMapper();
             var query = _customerRepository.EntitiesAsNoTracking
                     .ProjectTo<GetAllCustomersDto>(_mapper.ConfigurationProvider)
+                     .OrderByDescending(x => EF.Property<DateTime>(x, "CreatedDateTime"))
                      .AsQueryable();
 
             var qp = await query.GridifyQueryableAsync(QueryParams, mapper);
