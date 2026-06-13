@@ -40,8 +40,8 @@ namespace Invoice.Application.Services
 
             if (existingCustomer == null) throw new NotFoundException("مشتری پیدا نشد");
 
-            if (existingCustomer.UserId != _httpContextAccessor.HttpContext.GetUserId())
-                throw new BusinessException("مشتری مربوط به شما نمی باشد.");
+            //if (existingCustomer.UserId != _httpContextAccessor.HttpContext.GetUserId())
+            //    throw new BusinessException("مشتری مربوط به شما نمی باشد.");
 
             _mapper.Map(updateCustomerDto, existingCustomer);
 
