@@ -87,11 +87,11 @@ namespace Invoice.Application.Services
                 throw new UnauthorizedException("کاربر شناسایی نشد");
 
             var customer = await _customerRepository
-                .EntitiesAsNoTracking.Where(c => c.Id == customerId && c.UserId == userId)
+                .EntitiesAsNoTracking.Where(c => c.Id == customerId )
                 .ProjectTo<GetCustomerDetailsDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();
 
-            if (customer == null) throw new NotFoundException("مشتری پیدا نشد");
+            if (customer == null) throw new NotFoundException("مشتری پیدا نشد.");
 
             return customer;
         }

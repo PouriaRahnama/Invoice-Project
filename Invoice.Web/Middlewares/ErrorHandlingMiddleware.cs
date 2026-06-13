@@ -30,13 +30,13 @@ public class ErrorHandlingMiddleware
                     ex.Message.IsPersian() ? ex.Message : "درخواست ارسال شده نامعتبر است.",
 
                 StatusCodes.Status401Unauthorized =>
-                    "شما مجوز دسترسی به این بخش را ندارید. لطفاً وارد حساب کاربری خود شوید.",
+                   ex.Message.IsPersian() ? ex.Message : "شما مجوز دسترسی به این بخش را ندارید. لطفاً وارد حساب کاربری خود شوید.",
 
                 StatusCodes.Status404NotFound =>
                     ex.Message.IsPersian() ? ex.Message : "منبع یا اطلاعات مورد نظر یافت نشد.",
 
                 StatusCodes.Status500InternalServerError =>
-                    "خطای غیرمنتظره‌ای در سرور رخ داده است. لطفاً بعداً دوباره تلاش کنید.",
+                  ex.Message.IsPersian() ? ex.Message : "خطای غیرمنتظره‌ای در سرور رخ داده است. لطفاً بعداً دوباره تلاش کنید.",
 
                 _ =>
                     "خطایی در پردازش درخواست رخ داده است."
