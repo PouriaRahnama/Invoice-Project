@@ -38,7 +38,7 @@
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ClockSkew = TimeSpan.FromMinutes(5),
+                    ClockSkew = TimeSpan.FromMinutes(1),
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
@@ -55,7 +55,7 @@
                     {
                         context.HandleResponse();
 
-                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         context.Response.ContentType = "application/json";
                         var result = OkApiResult<string>.Fail("the Token is not valid.", 401);
                         await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(result));

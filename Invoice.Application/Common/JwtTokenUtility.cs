@@ -26,7 +26,7 @@
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(expireTime),
+                expires: DateTime.Now.AddMinutes(expireTime),
                 signingCredentials: signingCredentials);
 
             string accessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
