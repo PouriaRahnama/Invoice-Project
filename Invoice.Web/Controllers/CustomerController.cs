@@ -9,6 +9,7 @@
         /// واکشی مشتریان - واکشی مشتریان ثبت شده توسط کاربر سیستم
         /// </summary>
         [HttpGet]
+        [AllowAnonymous]
         [DisplayName("واکشی مشتریان - واکشی مشتریان ثبت شده توسط کاربر سیستم")]
         public async Task<OkApiResult<SearchQueryResponse<GetAllCustomersDto>>> GetAll([FromQuery] FilterCustomersDto QueryParams)
         {
@@ -19,6 +20,7 @@
         /// واکشی مشتری توسط شناسه
         /// </summary>
         [HttpGet]
+        [AllowAnonymous]
         [DisplayName("واکشی مشتری توسط شناسه")]
         public async Task<OkApiResult<GetCustomerDetailsDto>> GetById([FromQuery] Guid customerId)
         {
@@ -29,6 +31,7 @@
         /// ایجاد مشتری
         /// </summary>
         [HttpPost]
+        [AllowAnonymous]
         [DisplayName("ایجاد مشتری")]
         public async Task<OkApiResult<Guid>> Create([FromBody] CreateCustomerDto createCustomerDto)
         {
@@ -39,6 +42,7 @@
         /// ویرایش مشتری
         /// </summary>
         [HttpPost]
+        [AllowAnonymous]
         [DisplayName("ویرایش مشتری")]
         public async Task<OkApiResult<bool>> Update([FromBody] UpdateCustomerDto updateCustomerDto)
         {

@@ -81,13 +81,13 @@ namespace Invoice.Application.Services
 
         public async Task<GetCustomerDetailsDto> GetByIdAsync(Guid customerId)
         {
-            var userId = _httpContextAccessor.HttpContext.GetUserId();
+            //var userId = _httpContextAccessor.HttpContext.GetUserId();
 
-            if (userId == null || userId == Guid.Empty)
-                throw new UnauthorizedException("کاربر شناسایی نشد");
+            //if (userId == null || userId == Guid.Empty)
+            //    throw new UnauthorizedException("کاربر شناسایی نشد");
 
             var customer = await _customerRepository
-                .EntitiesAsNoTracking.Where(c => c.Id == customerId )
+                .EntitiesAsNoTracking.Where(c => c.Id == customerId)
                 .ProjectTo<GetCustomerDetailsDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();
 

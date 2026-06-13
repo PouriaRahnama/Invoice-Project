@@ -10,6 +10,7 @@ public class InvoiceController : ApiBaseController
     /// ایجاد فاکتور
     /// </summary>
     [HttpPost]
+    [AllowAnonymous]
     [DisplayName("ایجاد فاکتور")]
     public async Task<OkApiResult<Guid>> Create([FromBody] CreateInvoiceDto createInvoiceDto)
     {
@@ -21,6 +22,7 @@ public class InvoiceController : ApiBaseController
     /// واکشی فاکتور توسط شناسه
     /// </summary>
     [HttpGet]
+    [AllowAnonymous]
     [DisplayName("واکشی فاکتور توسط شناسه")]
     public async Task<OkApiResult<GetInvoiceDetailsDto>> GetById([FromQuery] Guid invoiceId)
     {
@@ -28,19 +30,21 @@ public class InvoiceController : ApiBaseController
     }
 
     /// <summary>
-    /// واکشی فاکتورها توسط شناسه مشتری
+    /// واکشی فاکتورها با فیلتر - شناسه مشتری
     /// </summary>
     [HttpGet]
-    [DisplayName("واکشی فاکتورها توسط شناسه مشتری")]
-    public async Task<OkApiResult<SearchQueryResponse<GetInvoiceDetailsDto>>> GetByCustomerId([FromQuery] FilterInvoincesDto QueryParams)
+    [AllowAnonymous]
+    [DisplayName("واکشی فاکتورها با فیلتر - شناسه مشتری")]
+    public async Task<OkApiResult<SearchQueryResponse<GetInvoiceDetailsDto>>> GetAll([FromQuery] FilterInvoincesDto QueryParams)
     {
-        return OkApiResult<SearchQueryResponse<GetInvoiceDetailsDto>>.Ok(await _invoiceService.GetByCustomerIdAsync(QueryParams));
+        return OkApiResult<SearchQueryResponse<GetInvoiceDetailsDto>>.Ok(await _invoiceService.GetAllAsync(QueryParams));
     }
 
     /// <summary>
     /// تغییر وضعیت فاکتور توسط شناسه فاکتور 
     /// </summary>
     [HttpPost]
+    [AllowAnonymous]
     [DisplayName(" تغییر وضعیت فاکتور توسط شناسه فاکتور ")]
     public async Task<OkApiResult<bool>> ChangeStatus(Guid invoiceId, Status status)
     {

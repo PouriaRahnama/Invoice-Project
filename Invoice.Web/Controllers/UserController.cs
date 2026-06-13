@@ -36,10 +36,10 @@ namespace Invoice.Web.Controllers
         [HttpPost]
         [DisplayName("دریافت توکن جدید با رفرش توکن")]
         [AllowAnonymous]
-        public async Task<OkApiResult<TokenInfoDto>> GenerateNewToken([FromBody] string refreshToken)
+        public async Task<OkApiResult<TokenInfoDto>> GenerateNewToken([FromBody] UserRefreshTokenDto userRefreshTokenDto)
         {
             return OkApiResult<TokenInfoDto>
-                .Ok(await _userRefreshTokenService.GenerateNewUserTokenAsync(refreshToken));
+                .Ok(await _userRefreshTokenService.GenerateNewUserTokenAsync(userRefreshTokenDto.RefreshToken));
         }
 
         /// <summary>
@@ -47,9 +47,9 @@ namespace Invoice.Web.Controllers
         /// </summary>
         [HttpPost]
         [DisplayName("خروج از سیستم")]
-        public async Task<OkApiResult<bool>> Logout([FromBody] string refreshToken)
+        public async Task<OkApiResult<bool>> Logout([FromBody] UserRefreshTokenDto userRefreshTokenDto)
         {
-            return OkApiResult<bool>.Ok(await _userRefreshTokenService.RevokeAsync(refreshToken));
+            return OkApiResult<bool>.Ok(await _userRefreshTokenService.RevokeAsync(userRefreshTokenDto.RefreshToken));
         }
 
         /// <summary>
@@ -57,6 +57,7 @@ namespace Invoice.Web.Controllers
         /// </summary>
         [HttpGet]
         [DisplayName("واکشی کاربران سیستم - واکشی کاربر توسط شناسه")]
+        [AllowAnonymous]
         public async Task<OkApiResult<SearchQueryResponse<GetAllUserAccountsDto>>> GetAll([FromQuery] FilterUsersDto QueryParams)
         {
             return OkApiResult<SearchQueryResponse<GetAllUserAccountsDto>>.Ok(await _userService.GetAllAsync(QueryParams));

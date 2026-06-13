@@ -25,10 +25,10 @@
 
         public async Task<bool> ChangeStatusAsync(Guid invoiceId, Status status)
         {
-            var userId = _httpContextAccessor.HttpContext.GetUserId();
+            //var userId = _httpContextAccessor.HttpContext.GetUserId();
 
-            if (userId == null || userId == Guid.Empty)
-                throw new UnauthorizedException("کاربر شناسایی نشد");
+            //if (userId == null || userId == Guid.Empty)
+            //    throw new UnauthorizedException("کاربر شناسایی نشد");
 
             var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
 
@@ -111,13 +111,13 @@
    
         public async Task<GetInvoiceDetailsDto> GetByIdAsync(Guid invoiceId)
         {
-            var userId = _httpContextAccessor.HttpContext.GetUserId();
+            //var userId = _httpContextAccessor.HttpContext.GetUserId();
 
-            if (userId == null || userId == Guid.Empty)
-                throw new UnauthorizedException("کاربر شناسایی نشد");
+            //if (userId == null || userId == Guid.Empty)
+            //    throw new UnauthorizedException("کاربر شناسایی نشد");
 
             var invoiceDetails = await _invoiceRepository.EntitiesAsNoTracking
-                .Where(i => i.Id == invoiceId && i.UserId == userId)
+                .Where(i => i.Id == invoiceId)
                 .ProjectTo<GetInvoiceDetailsDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();
 
@@ -127,16 +127,15 @@
             return invoiceDetails;
         }
 
-        public async Task<SearchQueryResponse<GetInvoiceDetailsDto>> GetByCustomerIdAsync(FilterInvoincesDto QueryParams)
+        public async Task<SearchQueryResponse<GetInvoiceDetailsDto>> GetAllAsync(FilterInvoincesDto QueryParams)
         {
             var mapper = new InvoiceGridifyMapper();
-            var userId = _httpContextAccessor.HttpContext.GetUserId();
+            //var userId = _httpContextAccessor.HttpContext.GetUserId();
 
-            if (userId == null || userId == Guid.Empty)
-                throw new UnauthorizedException("کاربر شناسایی نشد");
+            //if (userId == null || userId == Guid.Empty)
+            //    throw new UnauthorizedException("کاربر شناسایی نشد");
 
             var query = _invoiceRepository.EntitiesAsNoTracking
-                .Where(i => i.CustomerId == QueryParams.CustomerId && i.UserId == userId)
                 .ProjectTo<GetInvoiceDetailsDto>(_mapper.ConfigurationProvider)
                 .AsQueryable();
 
@@ -144,7 +143,6 @@
 
             var pq = new Paging<GetInvoiceDetailsDto>(qp.Count, qp.Query);
             return new SearchQueryResponse<GetInvoiceDetailsDto>(QueryParams, pq);
-
         }
 
         private async Task<string> GenerateInvoiceNumberAsync()
