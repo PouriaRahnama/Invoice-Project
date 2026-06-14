@@ -17,6 +17,17 @@
         }
 
         /// <summary>
+        /// واکشی مشتریان (کلی) - واکشی مشتریان ثبت شده توسط کاربر سیستم
+        /// </summary>
+        [HttpGet]
+        [AllowAnonymous]
+        [DisplayName("واکشی مشتریان (کلی) - واکشی مشتریان ثبت شده توسط کاربر سیستم")]
+        public async Task<OkApiResult<SearchQueryResponse<GetCustomersDto>>> GetCustomers([FromQuery] FilterCustomersDto QueryParams)
+        {
+            return OkApiResult<SearchQueryResponse<GetCustomersDto>>.Ok(await _customerService.GetCustomersAsync(QueryParams));
+        }
+
+        /// <summary>
         /// واکشی مشتری توسط شناسه
         /// </summary>
         [HttpGet]

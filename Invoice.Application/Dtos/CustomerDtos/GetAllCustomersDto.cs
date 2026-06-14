@@ -11,4 +11,10 @@
         public DateTime? CreatedDateTime { get; set; }
 
     }
+    public class GetCustomersDto
+    {
+        public Guid CustomerId { get; set; }
+        public string FullName { get; set; }
+    }
+
 }

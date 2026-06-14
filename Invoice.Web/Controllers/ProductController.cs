@@ -16,6 +16,18 @@
         }
 
         /// <summary>
+        ///(کلی) واکشی تمام محصولات
+        /// </summary>
+        [HttpGet]
+        [DisplayName("واکشی تمام محصولات (کلی )")]
+        [AllowAnonymous]
+        public async Task<OkApiResult<SearchQueryResponse<GetProductsDto>>> GetProducts([FromQuery] FilterProductsDto QueryParams)
+        {
+            return OkApiResult<SearchQueryResponse<GetProductsDto>>.Ok(await _productService.GetProductsAsync(QueryParams));
+        }
+
+
+        /// <summary>
         /// واکشی محصول توسط شناسه
         /// </summary>
         [HttpGet]

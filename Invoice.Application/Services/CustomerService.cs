@@ -1,4 +1,4 @@
-﻿using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+﻿
 namespace Invoice.Application.Services
 {
     public class CustomerService : ICustomerService
@@ -77,6 +77,22 @@ namespace Invoice.Application.Services
 
             var pq = new Paging<GetAllCustomersDto>(qp.Count, qp.Query);
             return new SearchQueryResponse<GetAllCustomersDto>(QueryParams, pq);
+        }
+
+        public async Task<SearchQueryResponse<GetCustomersDto>> GetCustomersAsync(FilterCustomersDto QueryParams)
+        {
+            var mapper = new GetCustomersGridifyMapper();
+            var query = _customerRepository.EntitiesAsNoTracking
+                    .ProjectTo<GetCustomersDto>(_mapper.ConfigurationProvider)
+                     .AsQueryable();
+
+            var qp = await query.GridifyQueryableAsync(QueryParams, mapper);
+            var totalCount = await query.CountAsync();
+            QueryParams.Page = 1;
+            QueryParams.PageSize = totalCount;
+
+            var pq = new Paging<GetCustomersDto>(qp.Count, qp.Query);
+            return new SearchQueryResponse<GetCustomersDto>(QueryParams, pq);
         }
 
         public async Task<GetCustomerDetailsDto> GetByIdAsync(Guid customerId)

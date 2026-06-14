@@ -137,6 +137,7 @@
 
             var query = _invoiceRepository.EntitiesAsNoTracking
                 .ProjectTo<GetInvoiceDetailsDto>(_mapper.ConfigurationProvider)
+                .OrderByDescending(x => EF.Property<DateTime>(x, "CreatedDateTime"))
                 .AsQueryable();
 
             var qp = await query.GridifyQueryableAsync(QueryParams, mapper);

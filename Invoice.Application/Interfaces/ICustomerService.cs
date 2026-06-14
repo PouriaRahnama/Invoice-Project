@@ -4,6 +4,8 @@
     {
         Task<SearchQueryResponse<GetAllCustomersDto>> GetAllAsync(FilterCustomersDto QueryParams);
 
+        Task<SearchQueryResponse<GetCustomersDto>> GetCustomersAsync(FilterCustomersDto QueryParams);
+
         Task<GetCustomerDetailsDto> GetByIdAsync(Guid customerId);
 
         Task<Guid> CreateAsync(CreateCustomerDto createCustomerDto);

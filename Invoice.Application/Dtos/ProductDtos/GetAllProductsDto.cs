@@ -11,4 +11,10 @@ namespace Invoice.Application.Dtos.ProductDtos
         public DateTime? CreatedDateTime { get; set; }
         public string? ImagePath { get; set; }
     }
+
+    public class GetProductsDto
+    {
+        public Guid ProductId { get; set; }
+        public string Name { get; set; }
+    }
 }

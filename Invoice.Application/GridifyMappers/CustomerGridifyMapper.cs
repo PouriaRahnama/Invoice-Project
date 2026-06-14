@@ -11,4 +11,12 @@
             AddMap("Address", p => p.Address);
         }
     }
+
+    public class GetCustomersGridifyMapper : GridifyMapper<GetCustomersDto>
+    {
+        public GetCustomersGridifyMapper()
+        {
+            AddMap("FullName", p => p.FullName);
+        }
+    }
 }

@@ -16,7 +16,9 @@
                     ? null
                     : FilePaths.ProductImages + src.ImagePath));
 
-
+            CreateMap<Product, GetProductsDto>()
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
             CreateMap<Product, GetProductDetailsDto>()
                 .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Code))

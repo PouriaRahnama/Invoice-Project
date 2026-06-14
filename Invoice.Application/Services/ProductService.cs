@@ -59,6 +59,22 @@
             return new SearchQueryResponse<GetAllProductsDto>(QueryParams, pq);
         }
 
+        public async Task<SearchQueryResponse<GetProductsDto>> GetProductsAsync(FilterProductsDto QueryParams)
+        {
+            var mapper = new GetProductsGridifyMapper();
+
+            var query = _productRepository.EntitiesAsNoTracking
+                    .ProjectTo<GetProductsDto>(_mapper.ConfigurationProvider)
+                    .AsQueryable();
+
+            var qp = await query.GridifyQueryableAsync(QueryParams, mapper);
+            var totalCount = await query.CountAsync();
+            QueryParams.Page = 1;
+            QueryParams.PageSize = totalCount;
+            var pq = new Paging<GetProductsDto>(qp.Count, qp.Query);
+            return new SearchQueryResponse<GetProductsDto>(QueryParams, pq);
+        }
+
         public async Task<GetProductDetailsDto> GetByIdAsync(Guid productId)
         {
             var product = await _productRepository

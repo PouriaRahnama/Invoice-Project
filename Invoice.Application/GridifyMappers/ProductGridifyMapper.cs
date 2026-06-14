@@ -10,4 +10,12 @@
             AddMap("Price", p => p.Price);
         }
     }
+    public class GetProductsGridifyMapper : GridifyMapper<GetProductsDto>
+    {
+        public GetProductsGridifyMapper()
+        {
+            AddMap("Name", p => p.Name);
+            AddMap("ProductId", p => p.ProductId);
+        }
+    }
 }
