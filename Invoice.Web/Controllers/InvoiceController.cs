@@ -10,7 +10,6 @@ public class InvoiceController : ApiBaseController
     /// ایجاد فاکتور
     /// </summary>
     [HttpPost]
-    [AllowAnonymous]
     [DisplayName("ایجاد فاکتور")]
     public async Task<OkApiResult<Guid>> Create([FromBody] CreateInvoiceDto createInvoiceDto)
     {
@@ -22,7 +21,6 @@ public class InvoiceController : ApiBaseController
     /// واکشی فاکتور توسط شناسه
     /// </summary>
     [HttpGet]
-    [AllowAnonymous]
     [DisplayName("واکشی فاکتور توسط شناسه")]
     public async Task<OkApiResult<GetInvoiceDetailsDto>> GetById([FromQuery] Guid invoiceId)
     {
@@ -33,7 +31,6 @@ public class InvoiceController : ApiBaseController
     /// واکشی فاکتورها با فیلتر - شناسه مشتری
     /// </summary>
     [HttpGet]
-    [AllowAnonymous]
     [DisplayName("واکشی فاکتورها با فیلتر - شناسه مشتری")]
     public async Task<OkApiResult<SearchQueryResponse<GetInvoiceDetailsDto>>> GetAll([FromQuery] FilterInvoincesDto QueryParams)
     {
@@ -44,7 +41,6 @@ public class InvoiceController : ApiBaseController
     /// تغییر وضعیت فاکتور توسط شناسه فاکتور 
     /// </summary>
     [HttpPost]
-    [AllowAnonymous]
     [DisplayName(" تغییر وضعیت فاکتور توسط شناسه فاکتور ")]
     public async Task<OkApiResult<bool>> ChangeStatus(Guid invoiceId, Status status)
     {
