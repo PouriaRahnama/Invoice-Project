@@ -1,6 +1,5 @@
-﻿using Humanizer;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Threading.Tasks;
 
 namespace Invoice.Web.Controllers;
 public class ReportController : ApiBaseController
@@ -9,7 +8,8 @@ public class ReportController : ApiBaseController
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<IActionResult> GenerateInvoice([FromQuery] Guid? invoiceId)
+    public async Task<IActionResult> GenerateInvoice(
+        [FromQuery][Required(ErrorMessage ="شناسه فاکتور الزامی است")] Guid invoiceId)
     {
 
         var report = new StiReport();
@@ -20,10 +20,7 @@ public class ReportController : ApiBaseController
 
         var myData = new GetInvoiceDetailsReportDto();
 
-        if (invoiceId != Guid.Empty)
-        {
-            myData = await _invoiceService.GetByIdForReportAsync(Guid.Parse("1a3508d7-8aa3-46e8-b67f-411226039015"));
-        }
+        myData = await _invoiceService.GetByIdForReportAsync(invoiceId);
 
         var ds = BuildInvoiceReportDataSet(myData);
 
@@ -46,13 +43,19 @@ public class ReportController : ApiBaseController
         dtInvoice.Columns.Add("totalPrice", typeof(string));
         dtInvoice.Columns.Add("customerName", typeof(string));
         dtInvoice.Columns.Add("createdDateTime", typeof(string));
+        dtInvoice.Columns.Add("address", typeof(string));
+        dtInvoice.Columns.Add("phone", typeof(string));
+        dtInvoice.Columns.Add("status", typeof(string));
 
         dtInvoice.Rows.Add(
             dto.InvoiceId,
             dto.InvoiceNumber,
             dto.TotalPrice,
             dto.CustomerName,
-            dto.CreatedDateTime
+            dto.CreatedDateTime,
+            dto.Address,
+            dto.Phone,
+            dto.Status
         );
 
         ds.Tables.Add(dtInvoice);
