@@ -25,6 +25,18 @@
                 .ForMember(dest => dest.CreatedDateTime,
                     opt => opt.MapFrom(src => EF.Property<DateTime?>(src, "CreatedDateTime")));
 
+            CreateMap<Invoice.Domain.Entities.Invoice, GetInvoiceDetailsReportDto>()
+                .ForMember(dest => dest.InvoiceId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src =>
+                    src.Status == Status.Pending ? 20 :
+                    src.Status == Status.Paid ? 10 : 0))
+                .ForMember(dest => dest.InvoiceNumber, opt => opt.MapFrom(src => src.InvoiceNumber))
+                .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice.ToString("N0")))
+                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FullName))
+                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items))
+                .ForMember(dest => dest.CreatedDateTime,
+                    opt => opt.MapFrom(src => EF.Property<DateTime>(src, "CreatedDateTime").ToPersianDate()));
+
             CreateMap<InvoiceItem, GetInvoiceItemDto>()
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.DiscountPercent, opt => opt.MapFrom(src => src.DiscountPercent.ToString("N0") + "%"))
@@ -33,7 +45,16 @@
                 .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice.ToString("N0")))
                 .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice.ToString("N0")))
                 .ForMember(dest => dest.CreatedDateTime,
-                    opt => opt.MapFrom(src => EF.Property<DateTime?>(src, "CreatedDateTime"))); 
+                    opt => opt.MapFrom(src => EF.Property<DateTime?>(src, "CreatedDateTime")));
+
+            CreateMap<InvoiceItem, GetInvoiceItemReportDto>()
+                .ForMember(dest => dest.InvoiceId, opt => opt.MapFrom(src => src.InvoiceId))
+                .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+                .ForMember(dest => dest.DiscountPercent, opt => opt.MapFrom(src => src.DiscountPercent.ToString("N0") + "%"))
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+                .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice.ToString("N0")))
+                .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice.ToString("N0")));
         }
     }
 }

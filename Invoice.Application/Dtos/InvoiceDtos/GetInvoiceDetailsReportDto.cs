@@ -1,15 +1,14 @@
 ﻿
 namespace Invoice.Application.Dtos.InvoiceDtos
 {
-    public class GetInvoiceDetailsDto
+    public class GetInvoiceDetailsReportDto
     {
         public Guid InvoiceId { get; set; }
-        public Guid CustomerId { get; set; }
         public string InvoiceNumber { get; set; }
         public string TotalPrice { get; set; }
         public string Status { get; set; }
         public string CustomerName { get; set; }
-        public List<GetInvoiceItemDto> Items { get; set; } = new();
-        public DateTime? CreatedDateTime { get; set; }
+        public List<GetInvoiceItemReportDto> Items { get; set; } = new();
+        public string? CreatedDateTime { get; set; }
     }
 }

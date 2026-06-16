@@ -6,5 +6,6 @@
         Task<GetInvoiceDetailsDto> GetByIdAsync(Guid invoiceId);      
         Task<bool> ChangeStatusAsync(Guid invoiceId, Status status);
         Task<SearchQueryResponse<GetInvoiceDetailsDto>> GetAllAsync(FilterInvoincesDto QueryParams);
+        Task<GetInvoiceDetailsReportDto> GetByIdForReportAsync(Guid invoiceId);
     }
 }

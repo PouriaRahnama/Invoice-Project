@@ -32,6 +32,7 @@ public class InvoiceController : ApiBaseController
     /// </summary>
     [HttpGet]
     [DisplayName("واکشی فاکتورها با فیلتر - شناسه مشتری")]
+    [AllowAnonymous]
     public async Task<OkApiResult<SearchQueryResponse<GetInvoiceDetailsDto>>> GetAll([FromQuery] FilterInvoincesDto QueryParams)
     {
         return OkApiResult<SearchQueryResponse<GetInvoiceDetailsDto>>.Ok(await _invoiceService.GetAllAsync(QueryParams));

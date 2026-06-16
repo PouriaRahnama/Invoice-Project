@@ -127,6 +127,24 @@
             return invoiceDetails;
         }
 
+        public async Task<GetInvoiceDetailsReportDto> GetByIdForReportAsync(Guid invoiceId)
+        {
+            //var userId = _httpContextAccessor.HttpContext.GetUserId();
+
+            //if (userId == null || userId == Guid.Empty)
+            //    throw new UnauthorizedException("کاربر شناسایی نشد");
+
+            var invoiceDetailsReport = await _invoiceRepository.EntitiesAsNoTracking
+                .Where(i => i.Id == invoiceId)
+                .ProjectTo<GetInvoiceDetailsReportDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
+
+            if (invoiceDetailsReport.Items == null || !invoiceDetailsReport.Items.Any() || invoiceDetailsReport == null)
+                throw new NotFoundException("فاکتور مورد نظر یافت نشد.");
+
+            return invoiceDetailsReport;
+        }
+
         public async Task<SearchQueryResponse<GetInvoiceDetailsDto>> GetAllAsync(FilterInvoincesDto QueryParams)
         {
             var mapper = new InvoiceGridifyMapper();
