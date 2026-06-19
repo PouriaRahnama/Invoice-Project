@@ -86,10 +86,11 @@ namespace Invoice.Application.Services
                     .ProjectTo<GetCustomersDto>(_mapper.ConfigurationProvider)
                      .AsQueryable();
 
-            var qp = await query.GridifyQueryableAsync(QueryParams, mapper);
-            var totalCount = await query.CountAsync();
             QueryParams.Page = 1;
+            var totalCount = await query.CountAsync();
             QueryParams.PageSize = totalCount;
+
+            var qp = await query.GridifyQueryableAsync(QueryParams, mapper);
 
             var pq = new Paging<GetCustomersDto>(qp.Count, qp.Query);
             return new SearchQueryResponse<GetCustomersDto>(QueryParams, pq);

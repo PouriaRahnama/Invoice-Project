@@ -67,10 +67,11 @@
                     .ProjectTo<GetProductsDto>(_mapper.ConfigurationProvider)
                     .AsQueryable();
 
-            var qp = await query.GridifyQueryableAsync(QueryParams, mapper);
-            var totalCount = await query.CountAsync();
             QueryParams.Page = 1;
+            var totalCount = await query.CountAsync();
             QueryParams.PageSize = totalCount;
+            var qp = await query.GridifyQueryableAsync(QueryParams, mapper);
+
             var pq = new Paging<GetProductsDto>(qp.Count, qp.Query);
             return new SearchQueryResponse<GetProductsDto>(QueryParams, pq);
         }
