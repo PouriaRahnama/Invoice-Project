@@ -7,7 +7,6 @@ public class ReportController : ApiBaseController
     public ReportController(ILogger<ApiBaseController> logger) : base(logger) { }
 
     [HttpGet]
-    [AllowAnonymous]
     public async Task<IActionResult> GenerateInvoice(
         [FromQuery][Required(ErrorMessage ="شناسه فاکتور الزامی است")] Guid invoiceId)
     {
