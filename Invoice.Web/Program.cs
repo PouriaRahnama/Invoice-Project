@@ -1,5 +1,6 @@
 ﻿
 using Invoice.Framework.Common;
+using Invoice.Infrastructure.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,8 +93,17 @@ app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<SqlServerApplicationDbContext>();
-    db.Database.Migrate();
+    var services = scope.ServiceProvider;
+    try
+    {
+        var db = services.GetRequiredService<IApplicationDbContext>();
+        await db.Database.MigrateAsync();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        Console.WriteLine($"Critical Error: {ex.Message}");
+    }
 }
 
 app.UseSerilogRequestLogging();

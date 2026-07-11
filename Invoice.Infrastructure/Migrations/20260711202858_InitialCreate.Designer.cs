@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Invoice.Infrastructure.Migrations
 {
     [DbContext(typeof(SqlServerApplicationDbContext))]
-    [Migration("20260513070834_fix-shadow")]
-    partial class fixshadow
+    [Migration("20260711202858_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,6 +84,24 @@ namespace Invoice.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Customers", "Invoice");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("d3ffda0c-dd0c-45ef-99c7-c2230c0cfdf7"),
+                            Address = "تهران، خیابان اول، پلاک ۱",
+                            FullName = "شرکت الفبا",
+                            Phone = "02112345678",
+                            UserId = new Guid("6712adb7-a20d-43e9-8b29-357271f3bd65")
+                        },
+                        new
+                        {
+                            Id = new Guid("e552a8ec-456e-48d6-889c-765ac46a130c"),
+                            Address = "تهران، خیابان اول، پلاک 2",
+                            FullName = "1شرکت الفبا",
+                            Phone = "02112345671",
+                            UserId = new Guid("92aa3814-ee96-4593-bdd3-cd613268137a")
+                        });
                 });
 
             modelBuilder.Entity("Invoice.Domain.Entities.Invoice", b =>
@@ -115,8 +133,9 @@ namespace Invoice.Infrastructure.Migrations
                     b.Property<DateTime?>("DeletedDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("InvoiceNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -194,8 +213,9 @@ namespace Invoice.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Code")
-                        .HasColumnType("int");
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedByIP")
                         .HasColumnType("nvarchar(max)");
@@ -216,6 +236,9 @@ namespace Invoice.Infrastructure.Migrations
 
                     b.Property<DateTime?>("DeletedDateTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -241,11 +264,35 @@ namespace Invoice.Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name");
 
                     b.ToTable("Products", "Invoice");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("06a7205a-f164-44f5-ba3f-ea04a78edf44"),
+                            Code = "PRD-20260514-A1B2C3",
+                            Name = "لپ تاپ مدل X1",
+                            Price = 55000000,
+                            Quantity = 15
+                        },
+                        new
+                        {
+                            Id = new Guid("73319107-39c5-4f46-a400-2fd0795b71ea"),
+                            Code = "PRD-20260514-D4E5F6",
+                            Name = "کیبورد مکانیکی RGB",
+                            Price = 2500000,
+                            Quantity = 50
+                        });
                 });
 
             modelBuilder.Entity("Invoice.Domain.Entities.User", b =>
@@ -309,6 +356,93 @@ namespace Invoice.Infrastructure.Migrations
                     b.HasIndex("Username");
 
                     b.ToTable("Users", "Invoice");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("6712adb7-a20d-43e9-8b29-357271f3bd65"),
+                            PasswordHash = "3c830e2af2e5db02e2f467634499d3c807e7b0c1b09c247a478c893703999b0e",
+                            PasswordSalt = "6081de2f-df32-4e79-a844-772054b8fb32",
+                            Phone = "09121234567",
+                            Username = "adminUser"
+                        },
+                        new
+                        {
+                            Id = new Guid("92aa3814-ee96-4593-bdd3-cd613268137a"),
+                            PasswordHash = "3c830e2af2e5db02e2f467634499d3c807e7b0c1b09c247a478c893703999b0e",
+                            PasswordSalt = "6081de2f-df32-4e79-a844-772054b8fb32",
+                            Phone = "09139876543",
+                            Username = "adminUser2"
+                        });
+                });
+
+            modelBuilder.Entity("Invoice.Domain.Entities.UserRefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedByIP")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedDateTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("DeletedByIP")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeviceName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedByIP")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("RevokedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RefreshToken")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRefreshTokens", "Invoice");
                 });
 
             modelBuilder.Entity("Invoice.Domain.Entities.Customer", b =>
@@ -360,6 +494,17 @@ namespace Invoice.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Invoice.Domain.Entities.UserRefreshToken", b =>
+                {
+                    b.HasOne("Invoice.Domain.Entities.User", "User")
+                        .WithMany("UserRefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Invoice.Domain.Entities.Customer", b =>
                 {
                     b.Navigation("Invoices");
@@ -380,6 +525,8 @@ namespace Invoice.Infrastructure.Migrations
                     b.Navigation("Customers");
 
                     b.Navigation("Invoices");
+
+                    b.Navigation("UserRefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

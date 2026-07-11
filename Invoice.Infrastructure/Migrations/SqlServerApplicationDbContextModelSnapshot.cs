@@ -85,7 +85,7 @@ namespace Invoice.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("2b2f796c-757f-4ed2-b4dd-02ddf83c868c"),
+                            Id = new Guid("d3ffda0c-dd0c-45ef-99c7-c2230c0cfdf7"),
                             Address = "تهران، خیابان اول، پلاک ۱",
                             FullName = "شرکت الفبا",
                             Phone = "02112345678",
@@ -93,7 +93,7 @@ namespace Invoice.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f7686f38-da84-4c96-9fd0-8219bdb2feee"),
+                            Id = new Guid("e552a8ec-456e-48d6-889c-765ac46a130c"),
                             Address = "تهران، خیابان اول، پلاک 2",
                             FullName = "1شرکت الفبا",
                             Phone = "02112345671",
@@ -261,6 +261,12 @@ namespace Invoice.Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name");
@@ -270,7 +276,7 @@ namespace Invoice.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("401e8ea6-18ae-4aa9-9228-fa0339d27a45"),
+                            Id = new Guid("06a7205a-f164-44f5-ba3f-ea04a78edf44"),
                             Code = "PRD-20260514-A1B2C3",
                             Name = "لپ تاپ مدل X1",
                             Price = 55000000,
@@ -278,7 +284,7 @@ namespace Invoice.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("4c577160-916a-4033-913e-90245af8c9ba"),
+                            Id = new Guid("73319107-39c5-4f46-a400-2fd0795b71ea"),
                             Code = "PRD-20260514-D4E5F6",
                             Name = "کیبورد مکانیکی RGB",
                             Price = 2500000,

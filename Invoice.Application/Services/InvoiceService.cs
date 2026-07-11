@@ -41,7 +41,7 @@
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
-    
+
         public async Task<Guid> CreateAsync(CreateInvoiceDto createInvoiceDto)
         {
             var userId = _httpContextAccessor.HttpContext.GetUserId();
@@ -50,13 +50,12 @@
                 throw new UnauthorizedException("کاربر شناسایی نشد");
 
             if (createInvoiceDto.Items == null || !createInvoiceDto.Items.Any())
-                throw new BusinessException("فاکتور باید حداقل یک محصول داشته باشد."); 
+                throw new BusinessException("فاکتور باید حداقل یک محصول داشته باشد.");
 
             var productIds = createInvoiceDto.Items.Select(i => i.ProductId).ToList();
 
             var products = await _productRepository.Entities
-                .Where(p => productIds.Contains(p.Id))
-                .ToListAsync();
+                .Where(p => productIds.Contains(p.Id)).ToListAsync();
 
             if (products.Count != productIds.Count)
                 throw new BusinessException("تعدادی از محصولات وارد شده پیدا نشد.");
@@ -78,7 +77,7 @@
                 if (product.Quantity < itemDto.Quantity)
                     throw new BusinessException($"موجودی محصول کافی نمی باشد. {product.Name}");
 
-                long unitPrice = product.Price; 
+                long unitPrice = product.Price;
                 long totalBeforeDiscount = unitPrice * itemDto.Quantity;
                 long discountAmount = (long)(totalBeforeDiscount * (itemDto.DiscountPercent / 100m));
                 long finalItemTotal = totalBeforeDiscount - discountAmount;
@@ -101,14 +100,21 @@
             }
 
             invoice.TotalPrice = invoiceTotal;
- 
-            await _invoiceRepository.CreateAsync(invoice);
-            await _invoiceItemRepository.CreateRangeAsync(items);
 
-            await _unitOfWork.SaveChangesAsync();
+            try
+            {
+                await _invoiceRepository.CreateAsync(invoice);
+                await _invoiceItemRepository.CreateRangeAsync(items);
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new BusinessException("موجودی یکی از محصولات همزمان تغییر کرده است. لطفا مجدد تلاش کنید.");
+            }
             return invoice.Id;
         }
-   
+
         public async Task<GetInvoiceDetailsDto> GetByIdAsync(Guid invoiceId)
         {
             //var userId = _httpContextAccessor.HttpContext.GetUserId();
@@ -121,8 +127,8 @@
                 .ProjectTo<GetInvoiceDetailsDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync();
 
-            if (invoiceDetails.Items == null || !invoiceDetails.Items.Any() || invoiceDetails == null)          
-                    throw new NotFoundException("فاکتور مورد نظر یافت نشد.");
+            if (invoiceDetails.Items == null || !invoiceDetails.Items.Any() || invoiceDetails == null)
+                throw new NotFoundException("فاکتور مورد نظر یافت نشد.");
 
             return invoiceDetails;
         }
@@ -166,22 +172,22 @@
 
         private async Task<string> GenerateInvoiceNumberAsync()
         {
-            var currentYear = DateTime.UtcNow.Year; 
+            var currentYear = DateTime.UtcNow.Year;
             var latestInvoice = await _invoiceRepository.EntitiesAsNoTracking
-                .Where(inv => inv.InvoiceNumber.Contains(currentYear.ToString())) 
-                .OrderByDescending(inv => inv.InvoiceNumber) 
+                .Where(inv => inv.InvoiceNumber.Contains(currentYear.ToString()))
+                .OrderByDescending(inv => inv.InvoiceNumber)
                 .FirstOrDefaultAsync();
 
             string newNumber;
             if (latestInvoice == null)
-                newNumber = $"INV-{currentYear}-00001";         
+                newNumber = $"INV-{currentYear}-00001";
             else
             {
-                var parts = latestInvoice.InvoiceNumber.Split('-'); 
+                var parts = latestInvoice.InvoiceNumber.Split('-');
                 var lastPart = parts.Last();
-                int.TryParse(lastPart, out int currentSeq); 
-                currentSeq++; 
-                newNumber = $"INV-{currentYear}-{currentSeq:D5}"; 
+                int.TryParse(lastPart, out int currentSeq);
+                currentSeq++;
+                newNumber = $"INV-{currentYear}-{currentSeq:D5}";
             }
             return newNumber;
         }

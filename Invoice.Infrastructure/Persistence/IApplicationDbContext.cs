@@ -1,4 +1,6 @@
-﻿namespace Invoice.Infrastructure.Persistence;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+
+namespace Invoice.Infrastructure.Persistence;
 
 public interface IApplicationDbContext: IDisposable
 {
@@ -6,7 +8,7 @@ public interface IApplicationDbContext: IDisposable
 
     DbSet<TEntity> Set<TEntity>() where TEntity : class;
     int SaveChanges();
-
+    DatabaseFacade Database { get; }
     EntityEntry<TEntity> Entry<TEntity>(TEntity entity)
         where TEntity : class;
 
