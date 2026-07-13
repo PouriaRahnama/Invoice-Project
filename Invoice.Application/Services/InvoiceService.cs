@@ -25,11 +25,6 @@
 
         public async Task<bool> ChangeStatusAsync(Guid invoiceId, Status status)
         {
-            //var userId = _httpContextAccessor.HttpContext.GetUserId();
-
-            //if (userId == null || userId == Guid.Empty)
-            //    throw new UnauthorizedException("کاربر شناسایی نشد");
-
             var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
 
             if (invoice == null)
@@ -43,85 +38,87 @@
         }
 
         public async Task<Guid> CreateAsync(CreateInvoiceDto createInvoiceDto)
-        {
+        {           
             var userId = _httpContextAccessor.HttpContext.GetUserId();
-
             if (userId == null || userId == Guid.Empty)
                 throw new UnauthorizedException("کاربر شناسایی نشد");
-
+   
             if (createInvoiceDto.Items == null || !createInvoiceDto.Items.Any())
                 throw new BusinessException("فاکتور باید حداقل یک محصول داشته باشد.");
 
-            var productIds = createInvoiceDto.Items.Select(i => i.ProductId).ToList();
-
-            var products = await _productRepository.Entities
-                .Where(p => productIds.Contains(p.Id)).ToListAsync();
-
-            if (products.Count != productIds.Count)
-                throw new BusinessException("تعدادی از محصولات وارد شده پیدا نشد.");
-
-            var invoiceNumber = await GenerateInvoiceNumberAsync();
-
-            var invoice = _mapper.Map<Invoice.Domain.Entities.Invoice>(createInvoiceDto);
-            invoice.UserId = userId;
-            invoice.InvoiceNumber = invoiceNumber;
-
-            long invoiceTotal = 0;
-
-            var items = new List<InvoiceItem>();
-
-            foreach (var itemDto in createInvoiceDto.Items)
-            {
-                var product = products.First(p => p.Id == itemDto.ProductId);
-
-                if (product.Quantity < itemDto.Quantity)
-                    throw new BusinessException($"موجودی محصول کافی نمی باشد. {product.Name}");
-
-                long unitPrice = product.Price;
-                long totalBeforeDiscount = unitPrice * itemDto.Quantity;
-                long discountAmount = (long)(totalBeforeDiscount * (itemDto.DiscountPercent / 100m));
-                long finalItemTotal = totalBeforeDiscount - discountAmount;
-
-                var invoiceItem = new InvoiceItem
-                {
-                    InvoiceId = invoice.Id,
-                    ProductId = product.Id,
-                    Quantity = itemDto.Quantity,
-                    UnitPrice = unitPrice,
-                    DiscountPercent = itemDto.DiscountPercent,
-                    TotalPrice = finalItemTotal
-                };
-
-                items.Add(invoiceItem);
-                invoiceTotal += finalItemTotal;
-                product.Quantity -= itemDto.Quantity;
-
-                // _productRepository.Update(product); tracking => Savechange
-            }
-
-            invoice.TotalPrice = invoiceTotal;
-
+             await _unitOfWork.BeginTransactionAsync();
             try
             {
+                var productIds = createInvoiceDto.Items.Select(i => i.ProductId).ToList();
+
+                var products = await _productRepository.Entities
+                    .Where(p => productIds.Contains(p.Id))
+                    .ToListAsync();
+
+                if (products.Count != productIds.Count)
+                    throw new BusinessException("تعدادی از محصولات وارد شده پیدا نشد.");
+
+                var invoiceNumber = await GenerateInvoiceNumberAsync();
+
+                var invoice = _mapper.Map<Invoice.Domain.Entities.Invoice>(createInvoiceDto);
+                invoice.UserId = userId;
+                invoice.InvoiceNumber = invoiceNumber;
+
+                long invoiceTotal = 0;
+                var items = new List<InvoiceItem>();
+
+                foreach (var itemDto in createInvoiceDto.Items)
+                {
+                    var product = products.First(p => p.Id == itemDto.ProductId);
+
+                    if (product.Quantity < itemDto.Quantity)
+                        throw new BusinessException($"موجودی محصول {product.Name} کافی نیست.");
+
+                    var itemCalculation = CalculateItemPrice(product.Price, itemDto.Quantity, itemDto.DiscountPercent);
+
+                    var invoiceItem = new InvoiceItem
+                    {
+                        InvoiceId = invoice.Id,
+                        ProductId = product.Id,
+                        Quantity = itemDto.Quantity,
+                        UnitPrice = product.Price,
+                        DiscountPercent = itemDto.DiscountPercent,
+                        TotalPrice = itemCalculation.FinalPrice
+                    };
+
+                    items.Add(invoiceItem);
+                    invoiceTotal += itemCalculation.FinalPrice;
+
+
+                    product.Quantity -= itemDto.Quantity;
+
+                    // _productRepository.Update(product); tracking => Savechange
+                }
+
+                invoice.TotalPrice = invoiceTotal;
+
                 await _invoiceRepository.CreateAsync(invoice);
                 await _invoiceItemRepository.CreateRangeAsync(items);
 
                 await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+
+                return invoice.Id;
             }
             catch (DbUpdateConcurrencyException)
             {
+                await _unitOfWork.RollbackAsync();
                 throw new BusinessException("موجودی یکی از محصولات همزمان تغییر کرده است. لطفا مجدد تلاش کنید.");
             }
-            return invoice.Id;
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackAsync();
+                throw new BusinessException(ex.Message);
+            } 
         }
 
         public async Task<GetInvoiceDetailsDto> GetByIdAsync(Guid invoiceId)
         {
-            //var userId = _httpContextAccessor.HttpContext.GetUserId();
-
-            //if (userId == null || userId == Guid.Empty)
-            //    throw new UnauthorizedException("کاربر شناسایی نشد");
-
             var invoiceDetails = await _invoiceRepository.EntitiesAsNoTracking
                 .Where(i => i.Id == invoiceId)
                 .ProjectTo<GetInvoiceDetailsDto>(_mapper.ConfigurationProvider)
@@ -135,11 +132,6 @@
 
         public async Task<GetInvoiceDetailsReportDto> GetByIdForReportAsync(Guid invoiceId)
         {
-            //var userId = _httpContextAccessor.HttpContext.GetUserId();
-
-            //if (userId == null || userId == Guid.Empty)
-            //    throw new UnauthorizedException("کاربر شناسایی نشد");
-
             var invoiceDetailsReport = await _invoiceRepository.EntitiesAsNoTracking
                 .Where(i => i.Id == invoiceId)
                 .ProjectTo<GetInvoiceDetailsReportDto>(_mapper.ConfigurationProvider)
@@ -154,11 +146,6 @@
         public async Task<SearchQueryResponse<GetInvoiceDetailsDto>> GetAllAsync(FilterInvoincesDto QueryParams)
         {
             var mapper = new InvoiceGridifyMapper();
-            //var userId = _httpContextAccessor.HttpContext.GetUserId();
-
-            //if (userId == null || userId == Guid.Empty)
-            //    throw new UnauthorizedException("کاربر شناسایی نشد");
-
             var query = _invoiceRepository.EntitiesAsNoTracking
                 .ProjectTo<GetInvoiceDetailsDto>(_mapper.ConfigurationProvider)
                 .OrderByDescending(x => EF.Property<DateTime>(x, "CreatedDateTime"))
@@ -190,6 +177,13 @@
                 newNumber = $"INV-{currentYear}-{currentSeq:D5}";
             }
             return newNumber;
+        }
+
+        private (long DiscountAmount, long FinalPrice) CalculateItemPrice(long unitPrice, int quantity, decimal discountPercent)
+        {
+            long totalBeforeDiscount = unitPrice * quantity;
+            long discountAmount = (long)(totalBeforeDiscount * (discountPercent / 100m));
+            return (discountAmount, totalBeforeDiscount - discountAmount);
         }
     }
 }

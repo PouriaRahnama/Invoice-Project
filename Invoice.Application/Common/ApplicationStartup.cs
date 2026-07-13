@@ -4,9 +4,6 @@
     {
         public static void ApplicationConfigureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            #region serilog
-            #endregion
-
             #region DI ( Registeration Services )
             services.AddHttpContextAccessor();
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
@@ -57,7 +54,7 @@
 
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         context.Response.ContentType = "application/json";
-                        var result = OkApiResult<string>.Fail("the Token is not valid.", 401);
+                        var result = OkApiResult<string>.Fail(null, 401, "عدم احراز هویت: توکن معتبر نمی‌باشد یا منقضی شده است.");
                         await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(result));
                     },
                     OnForbidden = async context =>
@@ -65,7 +62,7 @@
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
                         context.Response.ContentType = "application/json";
 
-                        var result = OkApiResult<string>.Fail("forbidden", 403);
+                        var result = OkApiResult<string>.Fail(null, 403, "دسترسی غیرمجاز: شما اجازه دسترسی به این منبع را ندارید.");
                         await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(result));
                     }
                 };

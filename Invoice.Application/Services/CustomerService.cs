@@ -1,5 +1,4 @@
-﻿
-namespace Invoice.Application.Services
+﻿namespace Invoice.Application.Services
 {
     public class CustomerService : ICustomerService
     {
@@ -39,9 +38,6 @@ namespace Invoice.Application.Services
             var existingCustomer = await _customerRepository.GetByIdAsync(updateCustomerDto.CustomerId);
 
             if (existingCustomer == null) throw new NotFoundException("مشتری پیدا نشد");
-
-            //if (existingCustomer.UserId != _httpContextAccessor.HttpContext.GetUserId())
-            //    throw new BusinessException("مشتری مربوط به شما نمی باشد.");
 
             _mapper.Map(updateCustomerDto, existingCustomer);
 
@@ -98,11 +94,6 @@ namespace Invoice.Application.Services
 
         public async Task<GetCustomerDetailsDto> GetByIdAsync(Guid customerId)
         {
-            //var userId = _httpContextAccessor.HttpContext.GetUserId();
-
-            //if (userId == null || userId == Guid.Empty)
-            //    throw new UnauthorizedException("کاربر شناسایی نشد");
-
             var customer = await _customerRepository
                 .EntitiesAsNoTracking.Where(c => c.Id == customerId)
                 .ProjectTo<GetCustomerDetailsDto>(_mapper.ConfigurationProvider)

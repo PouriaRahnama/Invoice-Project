@@ -17,3 +17,6 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Invoice.Domain.Entities;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Invoice.Infrastructure.Common;
+global using Microsoft.EntityFrameworkCore.Storage;
+global using System.Data;
+
